@@ -1,8 +1,9 @@
-const CACHE = 'usdt-tracker-v1';
+const CACHE = 'usdt-tracker-v2';
+const BASE = '/usdt-tracker';
 const FILES = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
 ];
@@ -18,5 +19,9 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('/index.html'))));
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+      return caches.open(CACHE).then(c => { c.put(e.request, res.clone()); return res; });
+    })).catch(() => caches.match(BASE + '/index.html'))
+  );
 });

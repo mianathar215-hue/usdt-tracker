@@ -2,7 +2,7 @@
   "name": "USDT Tracker",
   "short_name": "USDT",
   "description": "USDT Buy/Sell Inventory & P&L Tracker",
-  "start_url": "/index.html",
+  "start_url": "/usdt-tracker/index.html",
   "display": "standalone",
   "background_color": "#0F6E56",
   "theme_color": "#0F6E56",
