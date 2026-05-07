@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="USDT Tracker">
+<meta name="theme-color" content="#0F6E56">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>USDT Tracker</title>
+<style>
+  :root {
+    --green: #0F6E56;
+    --green-light: #1D9E75;
+    --green-pale: #E1F5EE;
+    --green-mid: #9FE1CB;
+    --red: #E24B4A;
+    --red-dark: #A32D2D;
+    --red-pale: #FCEBEB;
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --text: #111111;
+    --text2: #666666;
+    --border: rgba(0,0,0,0.1);
+    --safe-top: env(safe-area-inset-top);
+    --safe-bottom: env(safe-area-inset-bottom);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --text: #f0f0f0;
+      --text2: #999999;
+      --border: rgba(255,255,255,0.1);
+      --green-pale: #0d2e24;
+      --red-pale: #2e0d0d;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); }
+  .app { display: flex; flex-direction: column; height: 100%; max-width: 430px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    background: var(--green);
+    padding: 12px 16px 14px;
+    padding-top: calc(12px + var(--safe-top));
+    flex-shrink: 0;
+  }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .header h1 { color: var(--green-pale); font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+  .header .subtitle { font-size: 11px; color: var(--green-mid); margin-top: 1px; }
+  .bal-box { text-align: right; }
+  .bal-label { font-size: 10px; color: var(--green-mid); }
+  .bal-val { font-size: 18px; font-weight: 700; color: #fff; }
+  .cur-row { display: flex; gap: 6px; }
+  .cur-btn { padding: 5px 12px; font-size: 12px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.35); background: transparent; color: var(--green-mid); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .cur-btn.active { background: #fff; color: var(--green); font-weight: 600; border-color: #fff; }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    background: var(--card);
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+  .nav-btn { flex: 1; padding: 8px 2px 6px; font-size: 10px; border: none; background: transparent; cursor: pointer; color: var(--text2); display: flex; flex-direction: column; align-items: center; gap: 3px; font-family: inherit; }
+  .nav-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-btn.active { color: var(--green); border-bottom: 2px solid var(--green); }
+
+  /* SCREENS */
+  .screens { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+  .screen { display: none; padding: 14px 14px calc(14px + var(--safe-bottom)); }
+  .screen.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--card); border-radius: 14px; border: 0.5px solid var(--border); padding: 13px 14px; margin-bottom: 12px; }
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .metric { background: var(--card); border-radius: 12px; border: 0.5px solid var(--border); padding: 11px 13px; }
+  .metric .lbl { font-size: 10px; color: var(--text2); margin-bottom: 4px; }
+  .metric .val { font-size: 19px; font-weight: 600; color: var(--text); }
+  .metric .val.g { color: var(--green); }
+  .metric .val.r { color: var(--red-dark); }
+
+  .sec-title { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.3px; text-transform: uppercase; margin: 14px 0 8px; }
+
+  /* TRADE CARDS */
+  .tc { background: var(--card); border-radius: 12px; border: 0.5px solid var(--border); padding: 11px 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .tc-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; font-weight: 700; }
+  .tc-icon.buy { background: var(--green-pale); color: var(--green); }
+  .tc-icon.sell { background: var(--red-pale); color: var(--red-dark); }
+  .tc-body { flex: 1; min-width: 0; }
+  .tc-top { display: flex; justify-content: space-between; align-items: center; }
+  .tc-type { font-size: 13px; font-weight: 600; }
+  .tc-type.buy { color: var(--green); }
+  .tc-type.sell { color: var(--red-dark); }
+  .tc-amt { font-size: 13px; font-weight: 600; }
+  .tc-bot { display: flex; justify-content: space-between; align-items: center; margin-top: 3px; }
+  .tc-date { font-size: 11px; color: var(--text2); }
+  .tc-rate { font-size: 11px; color: var(--text2); }
+  .tc-del { width: 30px; height: 30px; border-radius: 8px; border: 0.5px solid var(--border); background: transparent; color: var(--text2); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tc-del svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .cur-tag { display: inline-block; font-size: 9px; padding: 1px 5px; border-radius: 4px; margin-left: 4px; font-weight: 600; }
+  .cur-tag.AED { background: var(--green-pale); color: var(--green); }
+  .cur-tag.USD { background: #E6F1FB; color: #185FA5; }
+  .cur-tag.PKR { background: #FAEEDA; color: #854F0B; }
+
+  /* FORM */
+  .form-group { margin-bottom: 11px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 11px 13px; font-size: 14px;
+    border: 0.5px solid var(--border); border-radius: 11px;
+    background: var(--bg); color: var(--text); font-family: inherit;
+    -webkit-appearance: none; appearance: none;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(15,110,86,0.12); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .calc-preview { background: var(--green-pale); border-radius: 10px; padding: 10px 13px; margin-bottom: 11px; display: flex; justify-content: space-between; align-items: center; }
+  .calc-preview .cl { font-size: 12px; color: var(--green); }
+  .calc-preview .cv { font-size: 15px; font-weight: 700; color: var(--green); }
+  .btn-add { width: 100%; padding: 13px; background: var(--green); color: #fff; font-size: 15px; font-weight: 600; border: none; border-radius: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .btn-add:active { opacity: 0.85; transform: scale(0.98); }
+
+  /* CHART */
+  .chart-wrap { background: var(--card); border-radius: 14px; border: 0.5px solid var(--border); padding: 13px; margin-bottom: 12px; }
+  canvas { width: 100% !important; }
+
+  /* P&L ROWS */
+  .pl-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .pl-row:last-child { border-bottom: none; }
+  .pl-desc { font-size: 12px; }
+  .pl-desc small { font-size: 10px; color: var(--text2); display: block; margin-top: 2px; }
+  .pl-amt { font-size: 13px; font-weight: 600; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0 2px; border-top: 0.5px solid var(--border); margin-top: 6px; }
+  .total-row span { font-size: 14px; font-weight: 600; }
+  .total-val { font-size: 20px; font-weight: 700; }
+
+  /* EXPORT */
+  .exp-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .exp-btn { padding: 13px; border-radius: 13px; border: 1.5px solid; background: transparent; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+  .exp-btn.xlsx { border-color: var(--green); color: var(--green); }
+  .exp-btn.pdf { border-color: var(--red-dark); color: var(--red-dark); }
+  .exp-btn:active { opacity: 0.75; }
+  .exp-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .exp-status { font-size: 12px; color: var(--text2); text-align: center; padding: 10px; }
+
+  /* EMPTY */
+  .empty { font-size: 13px; color: var(--text2); padding: 20px 0; text-align: center; }
+  .empty-icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* INSTALL BANNER */
+  .install-banner { background: #185FA5; color: #fff; padding: 10px 14px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+  .install-banner.hidden { display: none; }
+  .install-banner button { background: #fff; color: #185FA5; border: none; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 600; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- INSTALL BANNER (iOS) -->
+  <div class="install-banner hidden" id="install-banner">
+    <span>📲 Add to Home Screen for app experience</span>
+    <button onclick="document.getElementById('install-banner').classList.add('hidden')">✕</button>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <div class="subtitle">USDT TRACKER</div>
+        <h1>My Trading Desk</h1>
+      </div>
+      <div class="bal-box">
+        <div class="bal-label">USDT in Hand</div>
+        <div class="bal-val" id="hdr-inv">0.00</div>
+      </div>
+    </div>
+    <div class="cur-row">
+      <button class="cur-btn active" onclick="setView('AED')">AED د.إ</button>
+      <button class="cur-btn" onclick="setView('USD')">USD $</button>
+      <button class="cur-btn" onclick="setView('PKR')">PKR ₨</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="show('dashboard',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-btn" onclick="show('trade',this)">
+      <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+      Trade
+    </button>
+    <button class="nav-btn" onclick="show('inventory',this)">
+      <svg viewBox="0 0 24 24"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1ZM3 7l9-4 9 4"/></svg>
+      Inventory
+    </button>
+    <button class="nav-btn" onclick="show('pl',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 16 4-4 4 4 4-4"/></svg>
+      P&amp;L
+    </button>
+    <button class="nav-btn" onclick="show('export',this)">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+  </nav>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen active">
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">Bought (USDT)</div><div class="val" id="m-bought">0</div></div>
+        <div class="metric"><div class="lbl">Sold (USDT)</div><div class="val" id="m-sold">0</div></div>
+        <div class="metric"><div class="lbl">Inventory</div><div class="val g" id="m-inv">0.00</div></div>
+        <div class="metric"><div class="lbl" id="profit-lbl">Net P&L</div><div class="val g" id="m-profit">0.00</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="vol-chart" height="120"></canvas></div>
+      <div class="sec-title">Recent trades</div>
+      <div id="recent-list"><div class="empty"><div class="empty-icon">📊</div>No trades yet</div></div>
+    </div>
+
+    <!-- TRADE -->
+    <div id="screen-trade" class="screen">
+      <div class="card">
+        <div class="two" style="margin-bottom:11px">
+          <div class="form-group" style="margin:0"><label>Type</label>
+            <select id="t-type"><option value="buy">↑ Buy USDT</option><option value="sell">↓ Sell USDT</option></select>
+          </div>
+          <div class="form-group" style="margin:0"><label>Currency</label>
+            <select id="t-cur" onchange="updateCalc()">
+              <option value="AED">AED د.إ</option>
+              <option value="USD">USD $</option>
+              <option value="PKR">PKR ₨</option>
+            </select>
+          </div>
+        </div>
+        <div class="two" style="margin-bottom:11px">
+          <div class="form-group" style="margin:0"><label>USDT Amount</label>
+            <input type="number" id="t-usdt" placeholder="500" inputmode="decimal" oninput="updateCalc()">
+          </div>
+          <div class="form-group" style="margin:0"><label>Your Rate</label>
+            <input type="number" id="t-rate" placeholder="3.68" step="0.001" inputmode="decimal" oninput="updateCalc()">
+          </div>
+        </div>
+        <div class="calc-preview">
+          <span class="cl">Total amount</span>
+          <span class="cv" id="t-calc">—</span>
+        </div>
+        <div class="two" style="margin-bottom:11px">
+          <div class="form-group" style="margin:0"><label>Date</label>
+            <input type="date" id="t-date">
+          </div>
+          <div class="form-group" style="margin:0"><label>Note</label>
+            <input type="text" id="t-note" placeholder="Binance...">
+          </div>
+        </div>
+        <button class="btn-add" onclick="addTrade()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Trade
+        </button>
+      </div>
+      <div class="sec-title">All Trades</div>
+      <div id="all-trades"><div class="empty"><div class="empty-icon">📋</div>No trades yet</div></div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div id="screen-inventory" class="screen">
+      <div class="metric-grid">
+        <div class="metric"><div class="lbl">USDT in hand</div><div class="val g" id="inv-usdt">0.00</div></div>
+        <div class="metric"><div class="lbl">Avg buy rate</div><div class="val" id="inv-avg">—</div></div>
+        <div class="metric"><div class="lbl">Total paid</div><div class="val" id="inv-paid">—</div></div>
+        <div class="metric"><div class="lbl">Total received</div><div class="val" id="inv-recv">—</div></div>
+      </div>
+      <div class="sec-title">Buy history</div>
+      <div id="buy-list"><div class="empty"><div class="empty-icon">📦</div>No purchases yet</div></div>
+    </div>
+
+    <!-- P&L -->
+    <div id="screen-pl" class="screen">
+      <div class="chart-wrap"><canvas id="pl-chart" height="130"></canvas></div>
+      <div class="sec-title">Statement</div>
+      <div class="card">
+        <div id="pl-rows"><div class="empty">No sell transactions yet</div></div>
+        <div class="total-row">
+          <span>Net profit / loss</span>
+          <span class="total-val" id="pl-total">0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div id="screen-export" class="screen">
+      <div class="card">
+        <div class="form-group"><label>View currency</label>
+          <select id="exp-cur">
+            <option value="AED">AED د.إ</option>
+            <option value="USD">USD $</option>
+            <option value="PKR">PKR ₨</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Report type</label>
+          <select id="exp-type">
+            <option value="all">All trades</option>
+            <option value="buy">Buy transactions only</option>
+            <option value="sell">Sell transactions only</option>
+            <option value="pl">P&L statement</option>
+          </select>
+        </div>
+      </div>
+      <div class="exp-btns">
+        <button class="exp-btn xlsx" onclick="exportExcel()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+          Excel
+        </button>
+        <button class="exp-btn pdf" onclick="exportPDF()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+          PDF
+        </button>
+      </div>
+      <div class="exp-status" id="exp-status">Select options above and tap export</div>
+      <div class="sec-title" style="margin-top:16px">How to install on iPhone</div>
+      <div class="card" style="font-size:13px;line-height:1.7;color:var(--text2)">
+        1. Open this page in <strong style="color:var(--text)">Safari</strong><br>
+        2. Tap the <strong style="color:var(--text)">Share</strong> button (box with arrow)<br>
+        3. Scroll down → tap <strong style="color:var(--text)">"Add to Home Screen"</strong><br>
+        4. Tap <strong style="color:var(--text)">Add</strong> — done! 🎉<br><br>
+        The app works <strong style="color:var(--text)">offline</strong> after install.
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+</div><!-- /app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ── Service Worker ──────────────────────────────────────────────
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// ── iOS install banner ──────────────────────────────────────────
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.navigator.standalone;
+if(isIOS && !isStandalone) document.getElementById('install-banner').classList.remove('hidden');
+
+// ── State ────────────────────────────────────────────────────────
+let trades = JSON.parse(localStorage.getItem('usdt_trades_pwa') || '[]');
+let viewCur = 'AED';
+const SYM = {AED:'د.إ', USD:'$', PKR:'₨'};
+let volChart, plChart;
+
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('t-date').value = today;
+
+function save(){ localStorage.setItem('usdt_trades_pwa', JSON.stringify(trades)); }
+function fmt(v,c){ return (SYM[c||viewCur])+' '+parseFloat(v).toFixed(2); }
+
+// ── Currency view ─────────────────────────────────────────────
+function setView(c){
+  viewCur = c;
+  document.querySelectorAll('.cur-btn').forEach(b=>b.classList.toggle('active', b.textContent.includes(c)));
+  const sc = document.querySelector('.screen.active').id.replace('screen-','');
+  refreshScreen(sc);
+  updateHeader();
+}
+
+function refreshScreen(sc){
+  if(sc==='dashboard') renderDashboard();
+  if(sc==='inventory') renderInventory();
+  if(sc==='pl') renderPL();
+  if(sc==='trade') renderAllTrades();
+}
+
+function show(id, btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  btn.classList.add('active');
+  refreshScreen(id);
+}
+
+// ── Calculator preview ────────────────────────────────────────
+function updateCalc(){
+  const u = parseFloat(document.getElementById('t-usdt').value)||0;
+  const r = parseFloat(document.getElementById('t-rate').value)||0;
+  const c = document.getElementById('t-cur').value;
+  document.getElementById('t-calc').textContent = (u&&r) ? fmt(u*r, c) : '—';
+}
+
+// ── Add trade ─────────────────────────────────────────────────
+function addTrade(){
+  const type = document.getElementById('t-type').value;
+  const usdt = parseFloat(document.getElementById('t-usdt').value);
+  const rate = parseFloat(document.getElementById('t-rate').value);
+  const cur  = document.getElementById('t-cur').value;
+  const date = document.getElementById('t-date').value;
+  const note = document.getElementById('t-note').value.trim();
+  if(!usdt||!rate||!date){ alert('Please fill USDT amount, rate, and date.'); return; }
+  trades.push({ type, usdt, rate, cur, localAmt: +(usdt*rate).toFixed(4), date, note, id: Date.now() });
+  trades.sort((a,b)=>a.date.localeCompare(b.date));
+  save();
+  document.getElementById('t-usdt').value='';
+  document.getElementById('t-note').value='';
+  document.getElementById('t-calc').textContent='—';
+  renderAllTrades();
+  updateHeader();
+}
+
+// ── Delete trade ─────────────────────────────────────────────
+function deleteTrade(id){
+  if(!confirm('Delete this trade?')) return;
+  trades = trades.filter(t=>t.id!==id);
+  save();
+  renderAllTrades();
+  updateHeader();
+  const sc = document.querySelector('.screen.active').id.replace('screen-','');
+  if(sc==='dashboard') renderDashboard();
+  if(sc==='inventory') renderInventory();
+  if(sc==='pl') renderPL();
+}
+
+// ── Trade card HTML ──────────────────────────────────────────
+function tcHTML(t){
+  const a = fmt(t.localAmt, t.cur);
+  return `<div class="tc">
+    <div class="tc-icon ${t.type}">${t.type==='buy'?'↑':'↓'}</div>
+    <div class="tc-body">
+      <div class="tc-top">
+        <span class="tc-type ${t.type}">${t.type==='buy'?'Buy':'Sell'}<span class="cur-tag ${t.cur}">${t.cur}</span></span>
+        <span class="tc-amt">${parseFloat(t.usdt).toLocaleString()} USDT</span>
+      </div>
+      <div class="tc-bot">
+        <span class="tc-date">${t.date}${t.note?' · '+t.note:''}</span>
+        <span class="tc-rate">${a} @ ${t.rate}</span>
+      </div>
+    </div>
+    <button class="tc-del" onclick="deleteTrade(${t.id})" aria-label="Delete">
+      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+    </button>
+  </div>`;
+}
+
+// ── Stats (per currency) ─────────────────────────────────────
+function stats(){
+  let boughtUSDT=0, soldUSDT=0;
+  const byCur = {};
+  trades.forEach(t=>{
+    if(!byCur[t.cur]) byCur[t.cur]={paid:0,recv:0,bUSDT:0,sUSDT:0};
+    if(t.type==='buy'){ boughtUSDT+=t.usdt; byCur[t.cur].paid+=t.localAmt; byCur[t.cur].bUSDT+=t.usdt; }
+    else { soldUSDT+=t.usdt; byCur[t.cur].recv+=t.localAmt; byCur[t.cur].sUSDT+=t.usdt; }
+  });
+  const inv = boughtUSDT - soldUSDT;
+  const plByCur = {};
+  ['AED','USD','PKR'].forEach(c=>{
+    const d = byCur[c]||{paid:0,recv:0,bUSDT:0,sUSDT:0};
+    const avg = d.bUSDT ? d.paid/d.bUSDT : 0;
+    plByCur[c] = { pl: d.recv - d.sUSDT*avg, avg, paid:d.paid, recv:d.recv, bUSDT:d.bUSDT, sUSDT:d.sUSDT };
+  });
+  return { boughtUSDT, soldUSDT, inv, plByCur };
+}
+
+function updateHeader(){
+  const s = stats();
+  document.getElementById('hdr-inv').textContent = s.inv.toFixed(2)+' USDT';
+}
+
+// ── Dashboard ─────────────────────────────────────────────────
+function renderDashboard(){
+  const s = stats();
+  const vc = s.plByCur[viewCur];
+  document.getElementById('m-bought').textContent = s.boughtUSDT.toLocaleString();
+  document.getElementById('m-sold').textContent = s.soldUSDT.toLocaleString();
+  document.getElementById('m-inv').textContent = s.inv.toFixed(2);
+  document.getElementById('profit-lbl').textContent = 'Net P&L ('+viewCur+')';
+  const pel = document.getElementById('m-profit');
+  pel.textContent = fmt(vc.pl);
+  pel.className = 'val '+(vc.pl>=0?'g':'r');
+
+  const last5 = [...trades].reverse().slice(0,5);
+  document.getElementById('recent-list').innerHTML = last5.length
+    ? last5.map(tcHTML).join('')
+    : '<div class="empty"><div class="empty-icon">📊</div>No trades yet</div>';
+
+  const last8 = trades.slice(-8);
+  if(volChart) volChart.destroy();
+  const ctx = document.getElementById('vol-chart').getContext('2d');
+  volChart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels: last8.map(t=>t.date.slice(5)),
+      datasets:[
+        {label:'Buy USDT', data:last8.map(t=>t.type==='buy'?t.usdt:0), backgroundColor:'#1D9E75', borderRadius:4},
+        {label:'Sell USDT', data:last8.map(t=>t.type==='sell'?t.usdt:0), backgroundColor:'#E24B4A', borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},
+      scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+  });
+}
+
+// ── All trades ────────────────────────────────────────────────
+function renderAllTrades(){
+  const el = document.getElementById('all-trades');
+  el.innerHTML = trades.length
+    ? [...trades].reverse().map(tcHTML).join('')
+    : '<div class="empty"><div class="empty-icon">📋</div>No trades yet</div>';
+}
+
+// ── Inventory ─────────────────────────────────────────────────
+function renderInventory(){
+  const s = stats();
+  const vc = s.plByCur[viewCur];
+  document.getElementById('inv-usdt').textContent = s.inv.toFixed(2);
+  document.getElementById('inv-avg').textContent = vc.avg>0 ? fmt(vc.avg)+'/USDT' : '—';
+  document.getElementById('inv-paid').textContent = vc.paid>0 ? fmt(vc.paid) : '—';
+  document.getElementById('inv-recv').textContent = vc.recv>0 ? fmt(vc.recv) : '—';
+  const buys = trades.filter(t=>t.type==='buy');
+  document.getElementById('buy-list').innerHTML = buys.length
+    ? [...buys].reverse().map(tcHTML).join('')
+    : '<div class="empty"><div class="empty-icon">📦</div>No purchases yet</div>';
+}
+
+// ── P&L ───────────────────────────────────────────────────────
+function renderPL(){
+  const sells = trades.filter(t=>t.type==='sell'&&t.cur===viewCur);
+  const buys  = trades.filter(t=>t.type==='buy'&&t.cur===viewCur);
+  const totalB = buys.reduce((a,t)=>a+t.usdt,0);
+  const totalP = buys.reduce((a,t)=>a+t.localAmt,0);
+  const avg = totalB ? totalP/totalB : 0;
+  const el = document.getElementById('pl-rows');
+
+  if(!sells.length){
+    el.innerHTML='<div class="empty">No '+viewCur+' sell transactions yet</div>';
+    document.getElementById('pl-total').textContent=fmt(0);
+    if(plChart){plChart.destroy(); plChart=null;}
+    return;
+  }
+
+  let cum=0; const plData=[];
+  let rows='';
+  sells.forEach(t=>{
+    const cost=t.usdt*avg;
+    const pl=t.localAmt-cost;
+    cum+=pl;
+    plData.push({d:t.date.slice(5), v:+cum.toFixed(2)});
+    rows+=`<div class="pl-row">
+      <div class="pl-desc">${t.date} · Sell ${t.usdt} USDT
+        <small>Cost: ${fmt(cost)} | Revenue: ${fmt(t.localAmt)}</small>
+      </div>
+      <div class="pl-amt" style="color:${pl>=0?'var(--green)':'var(--red-dark)'}">${pl>=0?'+':''}${fmt(pl)}</div>
+    </div>`;
+  });
+  el.innerHTML=rows;
+  const tot=cum;
+  const ptEl=document.getElementById('pl-total');
+  ptEl.textContent=(tot>=0?'+':'')+fmt(tot);
+  ptEl.style.color=tot>=0?'var(--green)':'var(--red-dark)';
+
+  if(plChart) plChart.destroy();
+  const ctx2=document.getElementById('pl-chart').getContext('2d');
+  plChart=new Chart(ctx2,{
+    type:'line',
+    data:{labels:plData.map(d=>d.d),datasets:[{label:'Cumulative P&L ('+viewCur+')',data:plData.map(d=>d.v),borderColor:'#0F6E56',backgroundColor:'rgba(29,158,117,0.12)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#0F6E56'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'},grid:{color:'rgba(128,128,128,0.1)'}}}}
+  });
+}
+
+// ── Export helpers ────────────────────────────────────────────
+function getRows(filter, cur){
+  const buys=trades.filter(t=>t.type==='buy'&&t.cur===cur);
+  const totalB=buys.reduce((a,t)=>a+t.usdt,0);
+  const totalP=buys.reduce((a,t)=>a+t.localAmt,0);
+  const avg=totalB?totalP/totalB:0;
+  let list=trades.filter(t=>t.cur===cur);
+  if(filter==='buy') list=list.filter(t=>t.type==='buy');
+  if(filter==='sell') list=list.filter(t=>t.type==='sell');
+  if(filter==='pl'){
+    list=list.filter(t=>t.type==='sell');
+    let cum=0;
+    return list.map(t=>{
+      const cost=t.usdt*avg, pl=t.localAmt-cost; cum+=pl;
+      return {Date:t.date,Type:'Sell','USDT':t.usdt,['Rate('+cur+')']:t.rate,['Revenue('+cur+')']:t.localAmt.toFixed(2),['Cost('+cur+')']:cost.toFixed(2),['P&L('+cur+')']:pl.toFixed(2),['Cum P&L('+cur+')']:cum.toFixed(2),Note:t.note||''};
+    });
+  }
+  return list.map(t=>({Date:t.date,Type:t.type.toUpperCase(),'USDT':t.usdt,['Rate('+cur+')']:t.rate,['Amount('+cur+')']:t.localAmt.toFixed(2),Note:t.note||''}));
+}
+
+function exportExcel(){
+  const cur=document.getElementById('exp-cur').value;
+  const type=document.getElementById('exp-type').value;
+  const rows=getRows(type,cur);
+  if(!rows.length){ alert('No '+cur+' trades for selected filter.'); return; }
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Trades');
+  const s=stats(); const vc=s.plByCur[cur];
+  const sum=[['Summary',''],['Currency',cur],['USDT Bought',vc.bUSDT],['USDT Sold',vc.sUSDT],['Total Paid('+cur+')',vc.paid.toFixed(2)],['Total Received('+cur+')',vc.recv.toFixed(2)],['Net P&L('+cur+')',vc.pl.toFixed(2)]];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Summary');
+  XLSX.writeFile(wb,'USDT_'+cur+'_'+today+'.xlsx');
+  document.getElementById('exp-status').textContent='✅ Excel exported: '+rows.length+' rows in '+cur;
+}
+
+function exportPDF(){
+  const cur=document.getElementById('exp-cur').value;
+  const type=document.getElementById('exp-type').value;
+  const rows=getRows(type,cur);
+  if(!rows.length){ alert('No '+cur+' trades for selected filter.'); return; }
+  const s=stats(); const vc=s.plByCur[cur]; const sm=SYM[cur];
+  let html=`<html><head><meta charset="UTF-8"><style>
+    body{font-family:-apple-system,sans-serif;font-size:12px;padding:20px;color:#111}
+    h1{font-size:20px;color:#0F6E56;margin-bottom:4px}
+    .sub{font-size:11px;color:#666;margin-bottom:16px}
+    .summary{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+    .s{background:#f4f4f4;padding:10px 14px;border-radius:8px;min-width:120px}
+    .s .l{font-size:10px;color:#888}.s .v{font-size:15px;font-weight:700}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#0F6E56;color:#fff;padding:7px 9px;text-align:left;font-weight:600}
+    td{padding:6px 9px;border-bottom:0.5px solid #eee}
+    tr:nth-child(even){background:#f9f9f9}
+    .buy{color:#0F6E56}.sell{color:#A32D2D}.pos{color:#0F6E56}.neg{color:#A32D2D}
+    .footer{margin-top:18px;font-size:10px;color:#aaa}
+  </style></head><body>
+  <h1>USDT Trading Report</h1>
+  <div class="sub">Date: ${today} &nbsp;·&nbsp; Currency: ${cur} &nbsp;·&nbsp; Report: ${type}</div>
+  <div class="summary">
+    <div class="s"><div class="l">USDT Bought</div><div class="v">${vc.bUSDT.toLocaleString()}</div></div>
+    <div class="s"><div class="l">USDT Sold</div><div class="v">${vc.sUSDT.toLocaleString()}</div></div>
+    <div class="s"><div class="l">Total Paid</div><div class="v">${sm}${vc.paid.toFixed(2)}</div></div>
+    <div class="s"><div class="l">Net P&L</div><div class="v ${vc.pl>=0?'pos':'neg'}">${sm}${vc.pl.toFixed(2)}</div></div>
+  </div>
+  <table><tr>${Object.keys(rows[0]).map(k=>`<th>${k}</th>`).join('')}</tr>`;
+  rows.forEach(r=>{
+    html+=`<tr>${Object.values(r).map((v,i)=>{
+      const k=Object.keys(r)[i];
+      let cls=k==='Type'?(v==='BUY'?'buy':'sell'):k.includes('P&L')?(parseFloat(v)>=0?'pos':'neg'):'';
+      return `<td class="${cls}">${v}</td>`;
+    }).join('')}</tr>`;
+  });
+  html+=`</table><div class="footer">USDT Tracker &nbsp;·&nbsp; ${rows.length} records &nbsp;·&nbsp; ${cur}</div></body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);}
+  document.getElementById('exp-status').textContent='✅ PDF ready: '+rows.length+' rows in '+cur;
+}
+
+// ── Init ──────────────────────────────────────────────────────
+renderDashboard();
+updateHeader();
+</script>
+</body>
+</html>
