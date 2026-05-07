@@ -11,790 +11,387 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>USDT Tracker</title>
 <style>
-:root{--green:#0F6E56;--green-light:#1D9E75;--green-pale:#E1F5EE;--green-mid:#9FE1CB;--red:#E24B4A;--red-dark:#A32D2D;--red-pale:#FCEBEB;--blue:#185FA5;--blue-pale:#E6F1FB;--amber:#854F0B;--amber-pale:#FAEEDA;--purple:#533AB7;--purple-pale:#EEEDFE;--bg:#f5f5f5;--card:#fff;--text:#111;--text2:#666;--border:rgba(0,0,0,0.1);--safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom)}
-@media(prefers-color-scheme:dark){:root{--bg:#0d0d0d;--card:#1a1a1a;--text:#f0f0f0;--text2:#999;--border:rgba(255,255,255,0.1);--green-pale:#0d2e24;--red-pale:#2e0d0d;--blue-pale:#0d1e2e;--amber-pale:#2e1e0d;--purple-pale:#1a1535}}
+:root{--green:#0F6E56;--green-pale:#E1F5EE;--green-mid:#9FE1CB;--red:#E24B4A;--red-dark:#A32D2D;--red-pale:#FCEBEB;--blue:#185FA5;--blue-pale:#E6F1FB;--amber:#854F0B;--amber-pale:#FAEEDA;--purple:#533AB7;--purple-pale:#EEEDFE;--orange:#C05C00;--orange-pale:#FFF0E0;--bg:#f5f5f5;--card:#fff;--text:#111;--text2:#666;--border:rgba(0,0,0,0.1);--safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom)}
+@media(prefers-color-scheme:dark){:root{--bg:#0d0d0d;--card:#1a1a1a;--text:#f0f0f0;--text2:#999;--border:rgba(255,255,255,0.1);--green-pale:#0d2e24;--red-pale:#2e0d0d;--blue-pale:#0d1e2e;--amber-pale:#2e1e0d;--purple-pale:#1a1535;--orange-pale:#2e1a00}}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:var(--bg);color:var(--text)}
 .app{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto}
 .header{background:var(--green);padding:12px 16px 14px;padding-top:calc(12px + var(--safe-top));flex-shrink:0}
-.header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.header h1{color:var(--green-pale);font-size:17px;font-weight:600;letter-spacing:-.3px}
+.header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.header h1{color:var(--green-pale);font-size:17px;font-weight:600}
 .subtitle{font-size:10px;color:var(--green-mid);margin-bottom:2px}
 .bal-box{text-align:right}
 .bal-label{font-size:10px;color:var(--green-mid)}
 .bal-val{font-size:17px;font-weight:700;color:#fff}
 .nav{display:flex;background:var(--card);border-bottom:.5px solid var(--border);flex-shrink:0;overflow-x:auto}
 .nav::-webkit-scrollbar{display:none}
-.nav-btn{flex:1;min-width:50px;padding:8px 2px 6px;font-size:9px;border:none;background:transparent;cursor:pointer;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;white-space:nowrap}
+.nav-btn{flex:1;min-width:44px;padding:8px 2px 6px;font-size:9px;border:none;background:transparent;cursor:pointer;color:var(--text2);display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit;white-space:nowrap}
 .nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .nav-btn.active{color:var(--green);border-bottom:2px solid var(--green)}
-.screens{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.screen{display:none;padding:14px 14px calc(20px + var(--safe-bottom))}
+.screens{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.screen{display:none;padding:13px 13px calc(20px + var(--safe-bottom))}
 .screen.active{display:block}
 .card{background:var(--card);border-radius:14px;border:.5px solid var(--border);padding:13px 14px;margin-bottom:12px}
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.metric{background:var(--card);border-radius:12px;border:.5px solid var(--border);padding:11px 13px}
-.metric .lbl{font-size:10px;color:var(--text2);margin-bottom:4px}
-.metric .val{font-size:17px;font-weight:600;color:var(--text)}
-.metric .val.g{color:var(--green)}
-.metric .val.r{color:var(--red-dark)}
-.metric .val.b{color:var(--blue)}
-.sec-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px;text-transform:uppercase;margin:14px 0 8px}
-.chart-wrap{background:var(--card);border-radius:14px;border:.5px solid var(--border);padding:10px;margin-bottom:12px}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.met{background:var(--card);border-radius:12px;border:.5px solid var(--border);padding:10px 12px}
+.met .lb{font-size:10px;color:var(--text2);margin-bottom:3px}
+.met .vl{font-size:15px;font-weight:600;color:var(--text)}
+.met .vl.g{color:var(--green)} .met .vl.r{color:var(--red-dark)} .met .vl.b{color:var(--blue)} .met .vl.o{color:var(--orange)}
+.stl{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.3px;text-transform:uppercase;margin:13px 0 7px}
+.cw{background:var(--card);border-radius:14px;border:.5px solid var(--border);padding:10px;margin-bottom:12px}
 canvas{width:100%!important}
-/* Trade cards */
-.tc{background:var(--card);border-radius:12px;border:.5px solid var(--border);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.tc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700}
-.tc-icon.buy{background:var(--green-pale);color:var(--green)}
-.tc-icon.sell-aed{background:var(--red-pale);color:var(--red-dark)}
-.tc-icon.sell-pkr{background:var(--purple-pale);color:var(--purple)}
-.tc-icon.opening{background:var(--green-pale);color:var(--green)}
-.tc-icon.cash-in{background:var(--blue-pale);color:var(--blue)}
-.tc-icon.cash-out{background:var(--amber-pale);color:var(--amber)}
-.tc-body{flex:1;min-width:0}
-.tc-top{display:flex;justify-content:space-between;align-items:center}
-.tc-label{font-size:12px;font-weight:600}
-.tc-label.buy{color:var(--green)}
-.tc-label.sell-aed{color:var(--red-dark)}
-.tc-label.sell-pkr{color:var(--purple)}
-.tc-label.opening{color:var(--green)}
-.tc-label.cash-in{color:var(--blue)}
-.tc-label.cash-out{color:var(--amber)}
-.tc-amt{font-size:13px;font-weight:600}
-.tc-bot{display:flex;justify-content:space-between;margin-top:3px}
-.tc-date,.tc-sub{font-size:10px;color:var(--text2)}
-.tc-del{width:28px;height:28px;border-radius:8px;border:.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tc-del svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
-/* badges */
-.badge{display:inline-block;font-size:9px;padding:1px 5px;border-radius:4px;margin-left:4px;font-weight:600}
-.badge.binance{background:#F0B90B22;color:#8a6a00}
-.badge.p2p{background:var(--blue-pale);color:var(--blue)}
-.badge.pkr{background:var(--purple-pale);color:var(--purple)}
-.badge.aed{background:var(--green-pale);color:var(--green)}
-/* forms */
-.form-group{margin-bottom:10px}
-.form-group label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px}
-.form-group input,.form-group select{width:100%;padding:10px 12px;font-size:14px;border:.5px solid var(--border);border-radius:11px;background:var(--bg);color:var(--text);font-family:inherit;-webkit-appearance:none;appearance:none}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--green)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-/* fee toggle */
-.fee-toggle{display:flex;gap:8px;margin-bottom:10px}
-.fee-btn{flex:1;padding:9px;border-radius:10px;border:.5px solid var(--border);background:transparent;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text2)}
-.fee-btn.active.binance{background:#F0B90B22;border-color:#F0B90B;color:#8a6a00}
-.fee-btn.active.p2p{background:var(--blue-pale);border-color:var(--blue);color:var(--blue)}
-/* preview box */
-.preview-box{border-radius:11px;padding:10px 13px;margin-bottom:10px}
-.preview-box.buy{background:var(--green-pale)}
-.preview-box.sell{background:var(--red-pale)}
-.preview-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.preview-row:last-child{margin-bottom:0;padding-top:4px;border-top:.5px solid rgba(0,0,0,0.08)}
-.preview-row .pl{font-size:11px;color:var(--text2)}
-.preview-row .pv{font-size:12px;font-weight:600;color:var(--text)}
-.preview-row .pv.big{font-size:14px}
-.preview-row .pv.fee{color:var(--red-dark);font-size:11px}
-/* pkr extra field */
-.pkr-fields{background:var(--purple-pale);border-radius:11px;padding:10px 12px;margin-bottom:10px;border:.5px solid rgba(83,58,183,0.2)}
-.pkr-fields .pkr-label{font-size:11px;color:var(--purple);font-weight:600;margin-bottom:8px}
-.btn-add{width:100%;padding:12px;background:var(--green);color:#fff;font-size:14px;font-weight:600;border:none;border-radius:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px}
-.btn-add:active{opacity:.85}
-/* summary */
-.summary-card{background:var(--card);border-radius:14px;border:.5px solid var(--border);padding:14px;margin-bottom:12px}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid var(--border)}
-.summary-row:last-child{border-bottom:none}
-.sr-label{font-size:13px;color:var(--text2)}
-.sr-val{font-size:14px;font-weight:600}
-.sr-val.g{color:var(--green)}
-.sr-val.r{color:var(--red-dark)}
-.sr-val.b{color:var(--blue)}
-/* P&L */
-.pl-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:.5px solid var(--border)}
-.pl-row:last-child{border-bottom:none}
-.pl-desc{font-size:12px}
-.pl-desc small{font-size:10px;color:var(--text2);display:block;margin-top:2px}
-.pl-amt{font-size:13px;font-weight:600;text-align:right}
-.total-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0 2px;border-top:.5px solid var(--border);margin-top:6px}
-.total-row span{font-size:13px;font-weight:600}
-.total-val{font-size:20px;font-weight:700}
-/* export */
-.exp-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.exp-btn{padding:13px;border-radius:13px;border:1.5px solid;background:transparent;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit}
-.exp-btn.xlsx{border-color:var(--green);color:var(--green)}
-.exp-btn.pdf{border-color:var(--red-dark);color:var(--red-dark)}
-.exp-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2}
-.exp-status{font-size:12px;color:var(--text2);text-align:center;padding:10px}
-.empty{font-size:13px;color:var(--text2);padding:18px 0;text-align:center}
-.empty-icon{font-size:28px;margin-bottom:6px}
-.install-tip{background:var(--blue-pale);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--blue);line-height:1.8}
-.info-box{background:var(--green-pale);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--green);margin-bottom:10px;line-height:1.6}
+.tc{background:var(--card);border-radius:12px;border:.5px solid var(--border);padding:9px 11px;margin-bottom:7px;display:flex;align-items:center;gap:9px}
+.tci{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700}
+.tci.buy{background:var(--green-pale);color:var(--green)} .tci.sell-aed{background:var(--red-pale);color:var(--red-dark)} .tci.sell-pkr{background:var(--purple-pale);color:var(--purple)} .tci.opening{background:var(--green-pale);color:var(--green)} .tci.cash-in{background:var(--blue-pale);color:var(--blue)} .tci.cash-out{background:var(--amber-pale);color:var(--amber)} .tci.expense{background:var(--orange-pale);color:var(--orange)}
+.tcb{flex:1;min-width:0}
+.tct{display:flex;justify-content:space-between;align-items:center}
+.tcl{font-size:11px;font-weight:600}
+.tcl.buy{color:var(--green)} .tcl.sell-aed{color:var(--red-dark)} .tcl.sell-pkr{color:var(--purple)} .tcl.opening{color:var(--green)} .tcl.cash-in{color:var(--blue)} .tcl.cash-out{color:var(--amber)} .tcl.expense{color:var(--orange)}
+.tca{font-size:12px;font-weight:600}
+.tcbt{display:flex;justify-content:space-between;margin-top:2px}
+.tcd,.tcs{font-size:10px;color:var(--text2)}
+.tcdl{width:26px;height:26px;border-radius:7px;border:.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tcdl svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8}
+.bdg{display:inline-block;font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;font-weight:600}
+.bdg.binance{background:#F0B90B22;color:#8a6a00} .bdg.p2p{background:var(--blue-pale);color:var(--blue)} .bdg.pkr{background:var(--purple-pale);color:var(--purple)} .bdg.aed{background:var(--green-pale);color:var(--green)}
+.fg{margin-bottom:9px}
+.fg label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:3px}
+.fg input,.fg select{width:100%;padding:9px 11px;font-size:13px;border:.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);font-family:inherit;-webkit-appearance:none}
+.fg input:focus,.fg select:focus{outline:none;border-color:var(--green)}
+.tw{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ftog{display:flex;gap:7px;margin-bottom:9px}
+.fbtn{flex:1;padding:8px;border-radius:9px;border:.5px solid var(--border);background:transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text2)}
+.fbtn.active.binance{background:#F0B90B22;border-color:#F0B90B;color:#8a6a00}
+.fbtn.active.p2p{background:var(--blue-pale);border-color:var(--blue);color:var(--blue)}
+.fbtn.active.buy{background:var(--green-pale);border-color:var(--green);color:var(--green)}
+.fbtn.active.sell-aed{background:var(--red-pale);border-color:var(--red-dark);color:var(--red-dark)}
+.fbtn.active.sell-pkr{background:var(--purple-pale);border-color:var(--purple);color:var(--purple)}
+.pvbox{border-radius:10px;padding:9px 12px;margin-bottom:9px}
+.pvbox.buy{background:var(--green-pale)} .pvbox.sell{background:var(--red-pale)}
+.pvr{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.pvr:last-child{margin-bottom:0;padding-top:4px;border-top:.5px solid rgba(0,0,0,0.08)}
+.pvr .pl{font-size:10px;color:var(--text2)} .pvr .pv{font-size:11px;font-weight:600;color:var(--text)} .pvr .pv.big{font-size:13px} .pvr .pv.fee{color:var(--red-dark);font-size:10px}
+.pkrf{background:var(--purple-pale);border-radius:10px;padding:9px 11px;margin-bottom:9px}
+.pkrf .pkl{font-size:10px;color:var(--purple);font-weight:600;margin-bottom:7px}
+.badd{width:100%;padding:11px;background:var(--green);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:12px;cursor:pointer;font-family:inherit}
+.badd:active{opacity:.85}
+.cchips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.cchip{padding:5px 10px;border-radius:99px;border:.5px solid var(--border);background:transparent;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text2)}
+.cchip.active{background:var(--orange-pale);border-color:var(--orange);color:var(--orange)}
+.sc{background:var(--card);border-radius:14px;border:.5px solid var(--border);padding:13px;margin-bottom:12px}
+.sr{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid var(--border)}
+.sr:last-child{border-bottom:none}
+.srl{font-size:12px;color:var(--text2)} .srv{font-size:13px;font-weight:600}
+.srv.g{color:var(--green)} .srv.r{color:var(--red-dark)} .srv.b{color:var(--blue)} .srv.o{color:var(--orange)}
+.mfil{display:flex;gap:5px;margin-bottom:11px;overflow-x:auto;padding-bottom:3px}
+.mfil::-webkit-scrollbar{display:none}
+.mbtn{padding:4px 11px;border-radius:99px;border:.5px solid var(--border);background:var(--card);font-size:10px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--text2);white-space:nowrap;flex-shrink:0}
+.mbtn.active{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:600}
+.cbar{background:var(--card);border-radius:11px;border:.5px solid var(--border);padding:9px 12px;margin-bottom:7px}
+.cbar-top{display:flex;justify-content:space-between;margin-bottom:5px}
+.cbar-name{font-size:11px;font-weight:600;color:var(--text)} .cbar-amt{font-size:11px;font-weight:600;color:var(--orange)}
+.cbar-track{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.cbar-fill{height:100%;background:var(--orange);border-radius:99px}
+.plrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:.5px solid var(--border)}
+.plrow:last-child{border-bottom:none}
+.pld{font-size:11px} .pld small{font-size:9px;color:var(--text2);display:block;margin-top:2px}
+.pla{font-size:12px;font-weight:600;text-align:right}
+.totr{display:flex;justify-content:space-between;align-items:center;padding:10px 0 2px;border-top:.5px solid var(--border);margin-top:5px}
+.totr span{font-size:12px;font-weight:600} .totv{font-size:19px;font-weight:700}
+.npbox{border-radius:13px;padding:13px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.npbox.profit{background:var(--green-pale)} .npbox.loss{background:var(--red-pale)}
+.npbox .npl{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.npbox.profit .npl{color:var(--green)} .npbox.loss .npl{color:var(--red-dark)}
+.npbox .npv{font-size:21px;font-weight:700}
+.npbox.profit .npv{color:var(--green)} .npbox.loss .npv{color:var(--red-dark)}
+.expbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px}
+.expbtn{padding:12px;border-radius:12px;border:1.5px solid;background:transparent;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:inherit}
+.expbtn.xlsx{border-color:var(--green);color:var(--green)} .expbtn.pdf{border-color:var(--red-dark);color:var(--red-dark)}
+.expbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+.exps{font-size:11px;color:var(--text2);text-align:center;padding:8px}
+.empty{font-size:12px;color:var(--text2);padding:16px 0;text-align:center}
+.eico{font-size:26px;margin-bottom:5px}
+.itip{background:var(--blue-pale);border-radius:11px;padding:11px 13px;font-size:11px;color:var(--blue);line-height:1.8}
 </style>
 </head>
 <body>
 <div class="app">
-
   <div class="header">
     <div class="header-row">
       <div><div class="subtitle">USDT TRACKER</div><h1>My Trading Desk</h1></div>
       <div class="bal-box"><div class="bal-label">USDT Balance</div><div class="bal-val" id="hdr-inv">0.00</div></div>
     </div>
   </div>
-
   <nav class="nav">
-    <button class="nav-btn active" onclick="show('dashboard',this)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
-    </button>
-    <button class="nav-btn" onclick="show('trade',this)">
-      <svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>Trade
-    </button>
-    <button class="nav-btn" onclick="show('inventory',this)">
-      <svg viewBox="0 0 24 24"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1ZM3 7l9-4 9 4"/></svg>Inventory
-    </button>
-    <button class="nav-btn" onclick="show('cash',this)">
-      <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 10H2"/><circle cx="12" cy="14" r="2"/></svg>Cash
-    </button>
-    <button class="nav-btn" onclick="show('pl',this)">
-      <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 16 4-4 4 4 4-4"/></svg>P&amp;L
-    </button>
-    <button class="nav-btn" onclick="show('export',this)">
-      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export
-    </button>
+    <button class="nav-btn active" onclick="show('dashboard',this)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</button>
+    <button class="nav-btn" onclick="show('trade',this)"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>Trade</button>
+    <button class="nav-btn" onclick="show('inventory',this)"><svg viewBox="0 0 24 24"><path d="M20 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1ZM3 7l9-4 9 4"/></svg>Stock</button>
+    <button class="nav-btn" onclick="show('cash',this)"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M22 10H2"/><circle cx="12" cy="14" r="2"/></svg>Cash</button>
+    <button class="nav-btn" onclick="show('expenses',this)"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Expenses</button>
+    <button class="nav-btn" onclick="show('pl',this)"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 16 4-4 4 4 4-4"/></svg>P&amp;L</button>
+    <button class="nav-btn" onclick="show('export',this)"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
   </nav>
-
   <div class="screens">
 
     <!-- DASHBOARD -->
     <div id="screen-dashboard" class="screen active">
-      <div class="metric-grid">
-        <div class="metric"><div class="lbl">USDT Balance</div><div class="val g" id="d-inv">0.00</div></div>
-        <div class="metric"><div class="lbl">Total Sold</div><div class="val" id="d-sold">0.00</div></div>
-        <div class="metric"><div class="lbl">Net P&L (AED)</div><div class="val g" id="d-pl">0.00</div></div>
-        <div class="metric"><div class="lbl">Total Cash (AED)</div><div class="val b" id="d-cash">0.00</div></div>
+      <div class="mg">
+        <div class="met"><div class="lb">USDT Balance</div><div class="vl g" id="d-inv">0.00</div></div>
+        <div class="met"><div class="lb">Gross P&L (AED)</div><div class="vl g" id="d-pl">0.00</div></div>
+        <div class="met"><div class="lb">Total Expenses</div><div class="vl o" id="d-exp">AED 0.00</div></div>
+        <div class="met"><div class="lb">Net Profit (AED)</div><div class="vl g" id="d-net">0.00</div></div>
       </div>
-      <div class="metric-grid">
-        <div class="metric"><div class="lbl">Total Fees Paid</div><div class="val r" id="d-fees">0.00 USDT</div></div>
-        <div class="metric"><div class="lbl">PKR Sales (AED eq.)</div><div class="val" id="d-pkr">0.00</div></div>
+      <div class="mg">
+        <div class="met"><div class="lb">Fees Paid (USDT)</div><div class="vl r" id="d-fees">0.00</div></div>
+        <div class="met"><div class="lb">Total Cash (AED)</div><div class="vl b" id="d-cash">AED 0.00</div></div>
       </div>
-      <div class="chart-wrap"><canvas id="vol-chart" height="110"></canvas></div>
-      <div class="sec-title">Recent Trades</div>
-      <div id="recent-list"><div class="empty"><div class="empty-icon">📊</div>No trades yet</div></div>
+      <div class="cw"><canvas id="vol-chart" height="110"></canvas></div>
+      <div class="stl">Recent Trades</div>
+      <div id="recent-list"><div class="empty"><div class="eico">📊</div>No trades yet</div></div>
     </div>
 
     <!-- TRADE -->
     <div id="screen-trade" class="screen">
       <div class="card">
-
-        <!-- Buy / Sell -->
-        <div class="form-group">
-          <label>Trade Type</label>
-          <div class="fee-toggle">
-            <button class="fee-btn active binance" id="tt-buy" onclick="setTradeType('buy')">↑ Buy USDT</button>
-            <button class="fee-btn" id="tt-sell-aed" onclick="setTradeType('sell-aed')">↓ Sell (AED)</button>
-            <button class="fee-btn" id="tt-sell-pkr" onclick="setTradeType('sell-pkr')">↓ Sell (PKR)</button>
+        <div class="fg"><label>Trade Type</label>
+          <div class="ftog">
+            <button class="fbtn active buy" id="tt-buy" onclick="setTT('buy')">↑ Buy</button>
+            <button class="fbtn" id="tt-sell-aed" onclick="setTT('sell-aed')">↓ Sell AED</button>
+            <button class="fbtn" id="tt-sell-pkr" onclick="setTT('sell-pkr')">↓ Sell PKR</button>
           </div>
         </div>
-
-        <!-- Binance / P2P -->
-        <div class="form-group">
-          <label>Platform</label>
-          <div class="fee-toggle">
-            <button class="fee-btn active binance" id="pt-binance" onclick="setPlatform('binance')">🟡 Binance (0.08% fee)</button>
-            <button class="fee-btn" id="pt-p2p" onclick="setPlatform('p2p')">🤝 P2P (no fee)</button>
+        <div class="fg"><label>Platform</label>
+          <div class="ftog">
+            <button class="fbtn active binance" id="pt-binance" onclick="setPF('binance')">🟡 Binance (0.08%)</button>
+            <button class="fbtn" id="pt-p2p" onclick="setPF('p2p')">🤝 P2P (no fee)</button>
           </div>
         </div>
-
-        <!-- USDT + Rate -->
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0">
-            <label id="usdt-label">USDT Amount</label>
-            <input type="number" id="t-usdt" placeholder="1000" inputmode="decimal" oninput="updatePreview()">
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label id="ul">USDT to Buy</label><input type="number" id="t-usdt" placeholder="1000" inputmode="decimal" oninput="updPrev()"></div>
+          <div class="fg" style="margin:0"><label id="rl">Rate (AED/USDT)</label><input type="number" id="t-rate" placeholder="3.68" step="0.001" inputmode="decimal" oninput="updPrev()"></div>
+        </div>
+        <div class="pkrf" id="pkr-fields" style="display:none">
+          <div class="pkl">PKR Sale Details</div>
+          <div class="tw">
+            <div class="fg" style="margin:0"><label>PKR Rate</label><input type="number" id="t-pkr-rate" placeholder="278" inputmode="decimal" oninput="updPrev()"></div>
+            <div class="fg" style="margin:0"><label>AED Equiv Rate</label><input type="number" id="t-aed-equiv" placeholder="3.65" step="0.001" inputmode="decimal" oninput="updPrev()"></div>
           </div>
-          <div class="form-group" style="margin:0">
-            <label id="rate-label">Rate (AED/USDT)</label>
-            <input type="number" id="t-rate" placeholder="3.68" step="0.001" inputmode="decimal" oninput="updatePreview()">
-          </div>
+          <div style="font-size:9px;color:var(--purple);margin-top:3px">AED equiv = 1 USDT in AED for this deal</div>
         </div>
-
-        <!-- PKR extra fields -->
-        <div class="pkr-fields" id="pkr-fields" style="display:none">
-          <div class="pkr-label">PKR Sale Details</div>
-          <div class="two">
-            <div class="form-group" style="margin:0">
-              <label>PKR Rate (PKR/USDT)</label>
-              <input type="number" id="t-pkr-rate" placeholder="278" step="0.01" inputmode="decimal" oninput="updatePreview()">
-            </div>
-            <div class="form-group" style="margin:0">
-              <label>AED Equivalent Rate</label>
-              <input type="number" id="t-aed-equiv" placeholder="e.g. 3.65" step="0.001" inputmode="decimal" oninput="updatePreview()">
-            </div>
-          </div>
-          <div style="font-size:10px;color:var(--purple);margin-top:4px">Enter what 1 USDT equals in AED for this PKR deal (for P&L)</div>
+        <div class="pvbox buy" id="pvbox">
+          <div class="pvr"><span class="pl">USDT entered</span><span class="pv" id="pv0">—</span></div>
+          <div class="pvr"><span class="pl">Binance fee (0.08%)</span><span class="pv fee" id="pv1">—</span></div>
+          <div class="pvr"><span class="pl" id="pvl2">USDT you receive</span><span class="pv big" id="pv2">—</span></div>
+          <div class="pvr"><span class="pl" id="pvl3">AED to pay</span><span class="pv big" id="pv3">—</span></div>
         </div>
-
-        <!-- Preview box -->
-        <div class="preview-box buy" id="preview-box">
-          <div class="preview-row"><span class="pl">USDT you enter</span><span class="pv" id="pv-gross">—</span></div>
-          <div class="preview-row"><span class="pl">Binance fee (0.08%)</span><span class="pv fee" id="pv-fee">—</span></div>
-          <div class="preview-row"><span class="pl" id="pv-net-label">USDT you receive</span><span class="pv big" id="pv-net">—</span></div>
-          <div class="preview-row"><span class="pl" id="pv-total-label">Total AED to pay</span><span class="pv big" id="pv-total">—</span></div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>Date</label><input type="date" id="t-date"></div>
+          <div class="fg" style="margin:0"><label>Note</label><input type="text" id="t-note" placeholder="optional"></div>
         </div>
-
-        <!-- Date + Note -->
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0"><label>Date</label><input type="date" id="t-date"></div>
-          <div class="form-group" style="margin:0"><label>Note</label><input type="text" id="t-note" placeholder="optional"></div>
-        </div>
-
-        <button class="btn-add" onclick="addTrade()">+ Add Trade</button>
+        <button class="badd" onclick="addTrade()">+ Add Trade</button>
       </div>
-
-      <div class="sec-title">All Trades</div>
-      <div id="all-trades"><div class="empty"><div class="empty-icon">📋</div>No trades yet</div></div>
+      <div class="stl">All Trades</div>
+      <div id="all-trades"><div class="empty"><div class="eico">📋</div>No trades yet</div></div>
     </div>
 
-    <!-- INVENTORY -->
+    <!-- STOCK / INVENTORY -->
     <div id="screen-inventory" class="screen">
-      <div class="sec-title">Opening Stock (Before This App)</div>
+      <div class="stl">Opening Stock (Before This App)</div>
       <div class="card">
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0"><label>USDT Amount</label><input type="number" id="oi-usdt" placeholder="5000" inputmode="decimal"></div>
-          <div class="form-group" style="margin:0"><label>Avg Cost (AED/USDT)</label><input type="number" id="oi-rate" placeholder="3.65" step="0.001" inputmode="decimal"></div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>USDT Amount</label><input type="number" id="oi-usdt" placeholder="5000" inputmode="decimal"></div>
+          <div class="fg" style="margin:0"><label>Avg Cost (AED/USDT)</label><input type="number" id="oi-rate" placeholder="3.65" step="0.001" inputmode="decimal"></div>
         </div>
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0"><label>Date</label><input type="date" id="oi-date"></div>
-          <div class="form-group" style="margin:0"><label>Note</label><input type="text" id="oi-note" placeholder="e.g. From Binance wallet"></div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>Date</label><input type="date" id="oi-date"></div>
+          <div class="fg" style="margin:0"><label>Note</label><input type="text" id="oi-note" placeholder="e.g. From Binance"></div>
         </div>
-        <button class="btn-add" onclick="addOpening()">+ Add Opening Stock</button>
+        <button class="badd" onclick="addOpening()">+ Add Opening Stock</button>
       </div>
-      <div id="opening-list"><div class="empty"><div class="empty-icon">📦</div>No opening stock added</div></div>
-
-      <div class="sec-title">Inventory Summary</div>
-      <div class="summary-card">
-        <div class="summary-row"><span class="sr-label">Opening Stock</span><span class="sr-val" id="inv-opening">0.00 USDT</span></div>
-        <div class="summary-row"><span class="sr-label">Bought (net after fees)</span><span class="sr-val" id="inv-bought">0.00 USDT</span></div>
-        <div class="summary-row"><span class="sr-label">Total Available</span><span class="sr-val g" id="inv-total">0.00 USDT</span></div>
-        <div class="summary-row"><span class="sr-label">Sold (net after fees)</span><span class="sr-val r" id="inv-sold">0.00 USDT</span></div>
-        <div class="summary-row"><span class="sr-label">Current Balance</span><span class="sr-val g" id="inv-balance">0.00 USDT</span></div>
-        <div class="summary-row"><span class="sr-label">Total Fees Paid</span><span class="sr-val r" id="inv-fees">0.00 USDT</span></div>
+      <div id="opening-list"><div class="empty"><div class="eico">📦</div>No opening stock added</div></div>
+      <div class="stl">Summary</div>
+      <div class="sc">
+        <div class="sr"><span class="srl">Opening Stock</span><span class="srv" id="is-open">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Bought (net after fees)</span><span class="srv" id="is-bought">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Total Available</span><span class="srv g" id="is-total">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Sold (net after fees)</span><span class="srv r" id="is-sold">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Current Balance</span><span class="srv g" id="is-bal">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Total Fees Paid</span><span class="srv r" id="is-fees">0.00 USDT</span></div>
+        <div class="sr"><span class="srl">Avg Cost per USDT</span><span class="srv" id="is-avg">AED 0.00</span></div>
       </div>
-
-      <div class="sec-title">Buy History</div>
-      <div id="buy-list"><div class="empty"><div class="empty-icon">🛒</div>No purchases yet</div></div>
+      <div class="stl">Buy History</div>
+      <div id="buy-list"><div class="empty"><div class="eico">🛒</div>No purchases yet</div></div>
     </div>
 
     <!-- CASH -->
     <div id="screen-cash" class="screen">
       <div class="card">
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0"><label>Type</label>
-            <select id="c-type"><option value="cash-in">↓ Cash In</option><option value="cash-out">↑ Cash Out</option></select>
-          </div>
-          <div class="form-group" style="margin:0"><label>Source</label>
-            <select id="c-source" onchange="toggleBankField()">
-              <option value="Cash in Hand">Cash in Hand</option>
-              <option value="Bank">Bank</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>Type</label><select id="c-type"><option value="cash-in">↓ Cash In</option><option value="cash-out">↑ Cash Out</option></select></div>
+          <div class="fg" style="margin:0"><label>Source</label><select id="c-source" onchange="togBank()"><option value="Cash in Hand">Cash in Hand</option><option value="Bank">Bank</option><option value="Other">Other</option></select></div>
         </div>
-        <div id="bank-name-row" class="form-group" style="display:none"><label>Bank Name</label>
-          <input type="text" id="c-bank" placeholder="e.g. ADIB, Emirates NBD, FAB...">
+        <div id="bank-row" class="fg" style="display:none"><label>Bank Name</label><input type="text" id="c-bank" placeholder="e.g. ADIB, Emirates NBD..."></div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>Amount (AED)</label><input type="number" id="c-amount" placeholder="5000" inputmode="decimal"></div>
+          <div class="fg" style="margin:0"><label>Date</label><input type="date" id="c-date"></div>
         </div>
-        <div class="two" style="margin-bottom:10px">
-          <div class="form-group" style="margin:0"><label>Amount (AED)</label><input type="number" id="c-amount" placeholder="5000" inputmode="decimal"></div>
-          <div class="form-group" style="margin:0"><label>Date</label><input type="date" id="c-date"></div>
-        </div>
-        <div class="form-group"><label>Note</label><input type="text" id="c-note" placeholder="Description..."></div>
-        <button class="btn-add" onclick="addCash()">+ Add Cash Record</button>
+        <div class="fg"><label>Note</label><input type="text" id="c-note" placeholder="Description..."></div>
+        <button class="badd" onclick="addCash()">+ Add Cash Record</button>
       </div>
-
-      <div class="sec-title">Cash Summary (AED)</div>
-      <div class="summary-card">
-        <div class="summary-row"><span class="sr-label">💵 Cash in Hand</span><span class="sr-val b" id="cs-hand">AED 0.00</span></div>
-        <div class="summary-row"><span class="sr-label">🏦 In Banks</span><span class="sr-val b" id="cs-bank">AED 0.00</span></div>
-        <div class="summary-row"><span class="sr-label">Total Cash</span><span class="sr-val g" id="cs-total">AED 0.00</span></div>
+      <div class="stl">Cash Summary (AED)</div>
+      <div class="sc">
+        <div class="sr"><span class="srl">💵 Cash in Hand</span><span class="srv b" id="cs-hand">AED 0.00</span></div>
+        <div class="sr"><span class="srl">🏦 In Banks</span><span class="srv b" id="cs-bank">AED 0.00</span></div>
+        <div class="sr"><span class="srl">Total Cash</span><span class="srv g" id="cs-total">AED 0.00</span></div>
       </div>
+      <div class="stl">Bank Balances</div>
+      <div id="bank-bkdn"><div class="empty">No bank records yet</div></div>
+      <div class="stl">All Records</div>
+      <div id="cash-list"><div class="empty"><div class="eico">💵</div>No cash records yet</div></div>
+    </div>
 
-      <div class="sec-title">Bank Balances</div>
-      <div id="bank-breakdown"><div class="empty">No bank records yet</div></div>
-
-      <div class="sec-title">All Cash Records</div>
-      <div id="cash-list"><div class="empty"><div class="empty-icon">💵</div>No cash records yet</div></div>
+    <!-- EXPENSES -->
+    <div id="screen-expenses" class="screen">
+      <div class="card">
+        <div class="fg"><label>Category</label>
+          <div class="cchips" id="cat-chips">
+            <button class="cchip active" onclick="selCat(this,'Transfer Fee')">💸 Transfer Fee</button>
+            <button class="cchip" onclick="selCat(this,'Bank Charge')">🏦 Bank Charge</button>
+            <button class="cchip" onclick="selCat(this,'Office Rent')">🏠 Office Rent</button>
+            <button class="cchip" onclick="selCat(this,'Salary')">👤 Salary</button>
+            <button class="cchip" onclick="selCat(this,'Mobile/Internet')">📱 Mobile</button>
+            <button class="cchip" onclick="selCat(this,'Transport')">🚗 Transport</button>
+            <button class="cchip" onclick="selCat(this,'Marketing')">📢 Marketing</button>
+            <button class="cchip" onclick="selCat(this,'Other')">📦 Other</button>
+          </div>
+        </div>
+        <div id="cust-cat-row" class="fg" style="display:none"><label>Custom Category</label><input type="text" id="exp-cust" placeholder="Category name"></div>
+        <div class="tw" style="margin-bottom:9px">
+          <div class="fg" style="margin:0"><label>Amount (AED)</label><input type="number" id="exp-amt" placeholder="500" inputmode="decimal"></div>
+          <div class="fg" style="margin:0"><label>Date</label><input type="date" id="exp-date"></div>
+        </div>
+        <div class="fg"><label>Description</label><input type="text" id="exp-desc" placeholder="What was this for?"></div>
+        <button class="badd" style="background:var(--orange)" onclick="addExpense()">+ Add Expense</button>
+      </div>
+      <div class="stl">Monthly Summary</div>
+      <div class="mfil" id="mfil"></div>
+      <div id="cat-bkdn"></div>
+      <div class="sc">
+        <div class="sr"><span class="srl">This Period</span><span class="srv o" id="exp-period-tot">AED 0.00</span></div>
+        <div class="sr"><span class="srl">All Time Total</span><span class="srv o" id="exp-all-tot">AED 0.00</span></div>
+      </div>
+      <div class="cw"><canvas id="exp-chart" height="120"></canvas></div>
+      <div class="stl">Expense Records</div>
+      <div id="exp-list"><div class="empty"><div class="eico">💸</div>No expenses yet</div></div>
     </div>
 
     <!-- P&L -->
     <div id="screen-pl" class="screen">
-      <div class="info-box">All P&L calculated in <strong>AED</strong>. PKR sales use your entered AED equivalent rate.</div>
-      <div class="metric-grid">
-        <div class="metric"><div class="lbl">AED Sales P&L</div><div class="val g" id="pl-aed-val">0.00</div></div>
-        <div class="metric"><div class="lbl">PKR Sales P&L (AED)</div><div class="val g" id="pl-pkr-val">0.00</div></div>
+      <div class="npbox profit" id="npbox">
+        <div>
+          <div class="npl">NET PROFIT (after expenses)</div>
+          <div class="npv" id="np-val">AED 0.00</div>
+        </div>
+        <div style="text-align:right;font-size:11px">
+          <div style="color:var(--text2)">Gross P&L</div><div style="font-weight:600" id="gpl-val">AED 0.00</div>
+          <div style="color:var(--text2);margin-top:3px">Expenses</div><div style="font-weight:600;color:var(--orange)" id="exp-ded">AED 0.00</div>
+        </div>
       </div>
-      <div class="chart-wrap"><canvas id="pl-chart" height="120"></canvas></div>
-      <div class="sec-title">P&L Statement</div>
+      <div class="mg">
+        <div class="met"><div class="lb">AED Sales P&L</div><div class="vl g" id="pl-aed">0.00</div></div>
+        <div class="met"><div class="lb">PKR Sales P&L (AED)</div><div class="vl g" id="pl-pkr">0.00</div></div>
+      </div>
+      <div class="cw"><canvas id="pl-chart" height="115"></canvas></div>
+      <div class="stl">Trade P&L</div>
       <div class="card">
         <div id="pl-rows"><div class="empty">No sell transactions yet</div></div>
-        <div class="total-row"><span>Total Net P&L (AED)</span><span class="total-val" id="pl-total">AED 0.00</span></div>
+        <div class="totr"><span>Gross P&L (AED)</span><span class="totv" id="pl-total">AED 0.00</span></div>
+      </div>
+      <div class="stl">Expense Deductions</div>
+      <div class="card">
+        <div id="pl-exp-rows"><div class="empty" style="padding:6px 0">No expenses recorded</div></div>
+        <div class="totr"><span>Total Expenses</span><span class="totv" style="color:var(--orange)" id="pl-exp-tot">AED 0.00</span></div>
       </div>
     </div>
 
     <!-- EXPORT -->
     <div id="screen-export" class="screen">
       <div class="card">
-        <div class="form-group"><label>Report type</label>
+        <div class="fg"><label>Report type</label>
           <select id="exp-type">
             <option value="all">All trades</option>
             <option value="buy">Buy transactions only</option>
             <option value="sell">Sell transactions only</option>
             <option value="pl">P&L statement</option>
+            <option value="expenses">Expenses</option>
             <option value="cash">Cash records</option>
             <option value="opening">Opening inventory</option>
           </select>
         </div>
       </div>
-      <div class="exp-btns">
-        <button class="exp-btn xlsx" onclick="exportExcel()">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Excel
-        </button>
-        <button class="exp-btn pdf" onclick="exportPDF()">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF
-        </button>
+      <div class="expbtns">
+        <button class="expbtn xlsx" onclick="doExcel()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Excel</button>
+        <button class="expbtn pdf" onclick="doPDF()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF</button>
       </div>
-      <div class="exp-status" id="exp-status">Select report type and tap export</div>
-      <div class="sec-title">Install on iPhone</div>
-      <div class="install-tip">
-        1. Open in <strong>Safari</strong><br>
-        2. Tap <strong>Share (□↑)</strong> at the bottom<br>
-        3. Tap <strong>"Add to Home Screen"</strong><br>
-        4. Tap <strong>Add</strong> ✅ Works offline!
-      </div>
+      <div class="exps" id="exp-status">Select report type and tap export</div>
+      <div class="stl">Install on iPhone</div>
+      <div class="itip">1. Open in <strong>Safari</strong><br>2. Tap <strong>Share (□↑)</strong> at the bottom<br>3. Tap <strong>"Add to Home Screen"</strong><br>4. Tap <strong>Add</strong> ✅ Works offline!</div>
     </div>
 
   </div>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 if('serviceWorker' in navigator) navigator.serviceWorker.register('/usdt-tracker/sw.js').catch(()=>{});
-
-const BINANCE_FEE = 0.0008; // 0.08%
-
-let trades   = JSON.parse(localStorage.getItem('usdt_trades_v4') || '[]');
-let opening  = JSON.parse(localStorage.getItem('usdt_opening_v4') || '[]');
-let cashRecs = JSON.parse(localStorage.getItem('usdt_cash_v4') || '[]');
-let volChart, plChart;
-
-// Trade form state
-let tradeType = 'buy';      // buy | sell-aed | sell-pkr
-let platform  = 'binance';  // binance | p2p
-
-const today = new Date().toISOString().split('T')[0];
-['t-date','oi-date','c-date'].forEach(id=>{ try{ document.getElementById(id).value=today; }catch(e){} });
-
-function save(){
-  localStorage.setItem('usdt_trades_v4', JSON.stringify(trades));
-  localStorage.setItem('usdt_opening_v4', JSON.stringify(opening));
-  localStorage.setItem('usdt_cash_v4', JSON.stringify(cashRecs));
-}
-const fmtAED = v => 'AED '+parseFloat(v).toFixed(2);
-const fmtPKR = v => 'PKR '+parseFloat(v).toFixed(2);
-const fmtU   = v => parseFloat(v).toFixed(4)+' USDT';
-
-// ── Trade type & platform toggles ─────────────────────────────
-function setTradeType(t){
-  tradeType = t;
-  ['tt-buy','tt-sell-aed','tt-sell-pkr'].forEach(id=>document.getElementById(id).classList.remove('active','binance','p2p'));
-  const el=document.getElementById('tt-'+t);
-  el.classList.add('active', platform==='binance'?'binance':'p2p');
-  document.getElementById('pkr-fields').style.display = t==='sell-pkr'?'block':'none';
-  document.getElementById('preview-box').className = 'preview-box '+(t==='buy'?'buy':'sell');
-  document.getElementById('rate-label').textContent = t==='sell-pkr' ? 'Rate (PKR/USDT)' : 'Rate (AED/USDT)';
-  document.getElementById('usdt-label').textContent = t==='buy' ? 'USDT to Buy' : 'USDT to Sell';
-  if(t==='sell-pkr'){ document.getElementById('t-rate').placeholder='278'; }
-  else { document.getElementById('t-rate').placeholder='3.68'; }
-  updatePreview();
-}
-function setPlatform(p){
-  platform=p;
-  ['pt-binance','pt-p2p'].forEach(id=>document.getElementById(id).classList.remove('active','binance','p2p'));
-  document.getElementById('pt-'+p).classList.add('active',p);
-  updatePreview();
-}
-
-// ── Live preview ──────────────────────────────────────────────
-function updatePreview(){
-  const usdt  = parseFloat(document.getElementById('t-usdt').value)||0;
-  const rate  = parseFloat(document.getElementById('t-rate').value)||0;
-  const hasFee = platform==='binance';
-
-  if(tradeType==='buy'){
-    const fee     = hasFee ? usdt*BINANCE_FEE : 0;
-    const netUsdt = usdt - fee;
-    const totalAED= usdt * rate;
-    document.getElementById('pv-gross').textContent    = usdt ? fmtU(usdt) : '—';
-    document.getElementById('pv-fee').textContent      = hasFee ? '-'+fmtU(fee) : 'No fee (P2P)';
-    document.getElementById('pv-net-label').textContent= 'USDT you receive';
-    document.getElementById('pv-net').textContent      = usdt ? fmtU(netUsdt) : '—';
-    document.getElementById('pv-total-label').textContent='AED you pay';
-    document.getElementById('pv-total').textContent    = (usdt&&rate) ? fmtAED(totalAED) : '—';
-  } else if(tradeType==='sell-aed'){
-    const fee     = hasFee ? usdt*BINANCE_FEE : 0;
-    const netUsdt = usdt - fee; // actual USDT deducted
-    const aedRecv = netUsdt * rate;
-    document.getElementById('pv-gross').textContent    = usdt ? fmtU(usdt) : '—';
-    document.getElementById('pv-fee').textContent      = hasFee ? '-'+fmtU(fee) : 'No fee (P2P)';
-    document.getElementById('pv-net-label').textContent= 'USDT deducted from balance';
-    document.getElementById('pv-net').textContent      = usdt ? fmtU(netUsdt) : '—';
-    document.getElementById('pv-total-label').textContent='AED you receive';
-    document.getElementById('pv-total').textContent    = (usdt&&rate) ? fmtAED(aedRecv) : '—';
-  } else { // sell-pkr
-    const pkrRate = parseFloat(document.getElementById('t-pkr-rate').value)||0;
-    const aedEq   = parseFloat(document.getElementById('t-aed-equiv').value)||0;
-    const fee     = hasFee ? usdt*BINANCE_FEE : 0;
-    const netUsdt = usdt - fee;
-    const pkrRecv = netUsdt * pkrRate;
-    const aedRecv = netUsdt * aedEq;
-    document.getElementById('pv-gross').textContent    = usdt ? fmtU(usdt) : '—';
-    document.getElementById('pv-fee').textContent      = hasFee ? '-'+fmtU(fee) : 'No fee (P2P)';
-    document.getElementById('pv-net-label').textContent= 'PKR you receive';
-    document.getElementById('pv-net').textContent      = (usdt&&pkrRate) ? fmtPKR(pkrRecv) : '—';
-    document.getElementById('pv-total-label').textContent='AED equivalent';
-    document.getElementById('pv-total').textContent    = (usdt&&aedEq) ? fmtAED(aedRecv) : '—';
-  }
-}
-
-// ── Add trade ─────────────────────────────────────────────────
-function addTrade(){
-  const usdt  = parseFloat(document.getElementById('t-usdt').value);
-  const rate  = parseFloat(document.getElementById('t-rate').value);
-  const date  = document.getElementById('t-date').value;
-  const note  = document.getElementById('t-note').value.trim();
-  if(!usdt||!rate||!date){ alert('Fill USDT amount, rate, and date.'); return; }
-
-  const hasFee = platform==='binance';
-  const fee    = hasFee ? usdt*BINANCE_FEE : 0;
-
-  let record = { type:tradeType, platform, usdt, rate, fee, date, note, id:Date.now() };
-
-  if(tradeType==='buy'){
-    record.netUsdt  = +(usdt - fee).toFixed(6); // USDT actually received
-    record.aedPaid  = +(usdt * rate).toFixed(4); // AED paid (on gross usdt)
-  } else if(tradeType==='sell-aed'){
-    record.netUsdt  = +(usdt - fee).toFixed(6); // USDT actually deducted
-    record.aedRecv  = +(record.netUsdt * rate).toFixed(4); // AED received
-    record.aedEquiv = record.aedRecv; // for P&L
-  } else { // sell-pkr
-    const pkrRate = parseFloat(document.getElementById('t-pkr-rate').value)||0;
-    const aedEq   = parseFloat(document.getElementById('t-aed-equiv').value)||0;
-    if(!pkrRate||!aedEq){ alert('Enter PKR rate and AED equivalent rate.'); return; }
-    record.pkrRate  = pkrRate;
-    record.aedEquiv = aedEq; // 1 USDT = X AED for this deal
-    record.netUsdt  = +(usdt - fee).toFixed(6);
-    record.pkrRecv  = +(record.netUsdt * pkrRate).toFixed(4);
-    record.aedRecv  = +(record.netUsdt * aedEq).toFixed(4); // AED equivalent received
-  }
-
-  trades.push(record);
-  trades.sort((a,b)=>a.date.localeCompare(b.date));
-  save();
-  // clear
-  document.getElementById('t-usdt').value='';
-  document.getElementById('t-note').value='';
-  document.getElementById('t-pkr-rate').value='';
-  document.getElementById('t-aed-equiv').value='';
-  updatePreview();
-  renderAllTrades(); updateHeader();
-}
-
-// ── Add opening ───────────────────────────────────────────────
-function addOpening(){
-  const usdt = parseFloat(document.getElementById('oi-usdt').value);
-  const rate = parseFloat(document.getElementById('oi-rate').value);
-  const date = document.getElementById('oi-date').value;
-  const note = document.getElementById('oi-note').value.trim();
-  if(!usdt||!rate){ alert('Fill USDT amount and cost rate.'); return; }
-  opening.push({ usdt, rate, aedCost:+(usdt*rate).toFixed(4), date:date||today, note, id:Date.now() });
-  save();
-  document.getElementById('oi-usdt').value='';
-  document.getElementById('oi-rate').value='';
-  document.getElementById('oi-note').value='';
-  renderInventory(); updateHeader();
-}
-
-// ── Add cash ──────────────────────────────────────────────────
-function addCash(){
-  const type   = document.getElementById('c-type').value;
-  const source = document.getElementById('c-source').value;
-  const bank   = source==='Bank' ? document.getElementById('c-bank').value.trim() : '';
-  const amount = parseFloat(document.getElementById('c-amount').value);
-  const date   = document.getElementById('c-date').value;
-  const note   = document.getElementById('c-note').value.trim();
-  if(!amount||!date){ alert('Fill amount and date.'); return; }
-  if(source==='Bank'&&!bank){ alert('Enter bank name.'); return; }
-  cashRecs.push({type,source,bank,amount,date,note,id:Date.now()});
-  cashRecs.sort((a,b)=>a.date.localeCompare(b.date));
-  save();
-  document.getElementById('c-amount').value='';
-  document.getElementById('c-note').value='';
-  document.getElementById('c-bank').value='';
-  renderCash(); updateHeader();
-}
-
-function toggleBankField(){
-  document.getElementById('bank-name-row').style.display = document.getElementById('c-source').value==='Bank' ? 'block' : 'none';
-}
-
-// ── Delete ────────────────────────────────────────────────────
-function deleteTrade(id){
-  if(!confirm('Delete this trade?'))return;
-  trades=trades.filter(t=>t.id!==id); save();
-  renderAllTrades(); updateHeader();
-  const sc=document.querySelector('.screen.active').id.replace('screen-','');
-  if(sc==='dashboard')renderDashboard();
-  if(sc==='pl')renderPL();
-}
-function deleteOpening(id){ if(!confirm('Delete?'))return; opening=opening.filter(o=>o.id!==id); save(); renderInventory(); updateHeader(); }
-function deleteCash(id){ if(!confirm('Delete?'))return; cashRecs=cashRecs.filter(c=>c.id!==id); save(); renderCash(); updateHeader(); }
-
-// ── HTML builders ─────────────────────────────────────────────
-function tcHTML(t){
-  const isBuy     = t.type==='buy';
-  const isSellAED = t.type==='sell-aed';
-  const isSellPKR = t.type==='sell-pkr';
-  const platBadge = `<span class="badge ${t.platform}">${t.platform==='binance'?'Binance':'P2P'}</span>`;
-  let label, iconCls, amt, sub;
-  if(isBuy){
-    label='Buy'; iconCls='buy';
-    amt = fmtU(t.netUsdt);
-    sub = fmtAED(t.aedPaid)+' @ '+t.rate+(t.fee>0?' | fee: '+t.fee.toFixed(4)+' USDT':'');
-  } else if(isSellAED){
-    label='Sell'; iconCls='sell-aed';
-    amt = fmtAED(t.aedRecv);
-    sub = fmtU(t.netUsdt)+' @ '+t.rate+(t.fee>0?' | fee: '+t.fee.toFixed(4)+' USDT':'');
-  } else {
-    label='Sell PKR'; iconCls='sell-pkr';
-    amt = fmtPKR(t.pkrRecv);
-    sub = fmtU(t.netUsdt)+' @ '+t.pkrRate+' PKR | AED eq: '+fmtAED(t.aedRecv);
-  }
-  return `<div class="tc">
-    <div class="tc-icon ${iconCls}">${isBuy?'↑':'↓'}</div>
-    <div class="tc-body">
-      <div class="tc-top"><span class="tc-label ${iconCls}">${label}${platBadge}</span><span class="tc-amt">${amt}</span></div>
-      <div class="tc-bot"><span class="tc-date">${t.date}${t.note?' · '+t.note:''}</span><span class="tc-sub">${sub}</span></div>
-    </div>
-    <button class="tc-del" onclick="deleteTrade(${t.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-  </div>`;
-}
-function openHTML(o){
-  return `<div class="tc">
-    <div class="tc-icon opening">📦</div>
-    <div class="tc-body">
-      <div class="tc-top"><span class="tc-label opening">Opening Stock</span><span class="tc-amt">${fmtU(o.usdt)}</span></div>
-      <div class="tc-bot"><span class="tc-date">${o.date}${o.note?' · '+o.note:''}</span><span class="tc-sub">${fmtAED(o.aedCost)} @ ${o.rate}</span></div>
-    </div>
-    <button class="tc-del" onclick="deleteOpening(${o.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-  </div>`;
-}
-function cashHTML(c){
-  const isIn=c.type==='cash-in';
-  const label=c.source==='Bank'?c.bank:c.source;
-  return `<div class="tc">
-    <div class="tc-icon ${c.type}">${isIn?'↓':'↑'}</div>
-    <div class="tc-body">
-      <div class="tc-top"><span class="tc-label ${c.type}">${isIn?'Cash In':'Cash Out'}</span><span class="tc-amt">${fmtAED(c.amount)}</span></div>
-      <div class="tc-bot"><span class="tc-date">${c.date} · ${label}${c.note?' · '+c.note:''}</span></div>
-    </div>
-    <button class="tc-del" onclick="deleteCash(${c.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
-  </div>`;
-}
-
-// ── Stats ─────────────────────────────────────────────────────
-function stats(){
-  // Inventory
-  const openingUSDT = opening.reduce((a,o)=>a+o.usdt,0);
-  const openingCost = opening.reduce((a,o)=>a+o.aedCost,0);
-  let boughtUSDT=0, aedPaid=0, soldUSDT=0, totalFees=0;
-  trades.forEach(t=>{
-    if(t.type==='buy'){ boughtUSDT+=t.netUsdt; aedPaid+=t.aedPaid; totalFees+=t.fee; }
-    else { soldUSDT+=t.netUsdt; totalFees+=t.fee; }
-  });
-  const totalAvail = openingUSDT + boughtUSDT;
-  const balance    = totalAvail - soldUSDT;
-
-  // Avg cost per USDT in AED (weighted: opening + buys)
-  const totalCostAED  = openingCost + aedPaid;
-  const totalCostUSDT = openingUSDT + boughtUSDT;
-  const avgCostAED    = totalCostUSDT ? totalCostAED / totalCostUSDT : 0;
-
-  // P&L per sell
-  let plAED=0, plPKR=0;
-  const plRows=[];
-  trades.filter(t=>t.type==='sell-aed'||t.type==='sell-pkr').forEach(t=>{
-    const cost  = t.netUsdt * avgCostAED;
-    const rev   = t.aedRecv; // AED received (or AED equivalent for PKR)
-    const pl    = rev - cost;
-    if(t.type==='sell-aed') plAED+=pl;
-    else plPKR+=pl;
-    plRows.push({...t, cost, rev, pl});
-  });
-
-  // Cash
-  let cashHand=0, cashBank=0;
-  const bankMap={};
-  cashRecs.forEach(c=>{
-    const sign=c.type==='cash-in'?1:-1;
-    const amt=c.amount*sign;
-    if(c.source==='Cash in Hand') cashHand+=amt;
-    else if(c.source==='Bank'){ cashBank+=amt; bankMap[c.bank]=(bankMap[c.bank]||0)+amt; }
-  });
-
-  return {openingUSDT,boughtUSDT,soldUSDT,totalAvail,balance,totalFees,avgCostAED,plAED,plPKR,totalPL:plAED+plPKR,plRows,cashHand,cashBank,bankMap};
-}
-
-function updateHeader(){
-  const s=stats();
-  document.getElementById('hdr-inv').textContent=s.balance.toFixed(2)+' USDT';
-}
-
-function show(id,btn){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
-  btn.classList.add('active');
-  if(id==='dashboard') renderDashboard();
-  if(id==='inventory') renderInventory();
-  if(id==='cash') renderCash();
-  if(id==='pl') renderPL();
-  if(id==='trade') renderAllTrades();
-}
-
-function renderDashboard(){
-  const s=stats();
-  document.getElementById('d-inv').textContent=s.balance.toFixed(2);
-  document.getElementById('d-sold').textContent=s.soldUSDT.toFixed(2);
-  document.getElementById('d-pl').textContent=fmtAED(s.totalPL);
-  document.getElementById('d-pl').className='val '+(s.totalPL>=0?'g':'r');
-  document.getElementById('d-cash').textContent=fmtAED(s.cashHand+s.cashBank);
-  document.getElementById('d-fees').textContent=s.totalFees.toFixed(4)+' USDT';
-  document.getElementById('d-pkr').textContent=fmtAED(s.plPKR);
-
-  const last5=[...trades].reverse().slice(0,5);
-  document.getElementById('recent-list').innerHTML=last5.length?last5.map(tcHTML).join(''):'<div class="empty"><div class="empty-icon">📊</div>No trades yet</div>';
-
-  const last8=trades.slice(-8);
-  if(volChart)volChart.destroy();
-  const ctx=document.getElementById('vol-chart').getContext('2d');
-  volChart=new Chart(ctx,{type:'bar',data:{labels:last8.map(t=>t.date.slice(5)),datasets:[{label:'Buy',data:last8.map(t=>t.type==='buy'?t.netUsdt:0),backgroundColor:'#1D9E75',borderRadius:4},{label:'Sell',data:last8.map(t=>(t.type==='sell-aed'||t.type==='sell-pkr')?t.netUsdt:0),backgroundColor:'#E24B4A',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'}}}}});
-}
-
-function renderAllTrades(){
-  document.getElementById('all-trades').innerHTML=trades.length?[...trades].reverse().map(tcHTML).join(''):'<div class="empty"><div class="empty-icon">📋</div>No trades yet</div>';
-}
-
-function renderInventory(){
-  const s=stats();
-  document.getElementById('inv-opening').textContent=s.openingUSDT.toFixed(4)+' USDT';
-  document.getElementById('inv-bought').textContent=s.boughtUSDT.toFixed(4)+' USDT';
-  document.getElementById('inv-total').textContent=s.totalAvail.toFixed(4)+' USDT';
-  document.getElementById('inv-sold').textContent=s.soldUSDT.toFixed(4)+' USDT';
-  document.getElementById('inv-balance').textContent=s.balance.toFixed(4)+' USDT';
-  document.getElementById('inv-fees').textContent=s.totalFees.toFixed(4)+' USDT';
-  document.getElementById('opening-list').innerHTML=opening.length?[...opening].reverse().map(openHTML).join(''):'<div class="empty"><div class="empty-icon">📦</div>No opening stock added</div>';
-  document.getElementById('buy-list').innerHTML=trades.filter(t=>t.type==='buy').length?[...trades].filter(t=>t.type==='buy').reverse().map(tcHTML).join(''):'<div class="empty"><div class="empty-icon">🛒</div>No purchases yet</div>';
-}
-
-function renderCash(){
-  const s=stats();
-  document.getElementById('cs-hand').textContent=fmtAED(s.cashHand);
-  document.getElementById('cs-bank').textContent=fmtAED(s.cashBank);
-  document.getElementById('cs-total').textContent=fmtAED(s.cashHand+s.cashBank);
-  const banks=Object.entries(s.bankMap);
-  document.getElementById('bank-breakdown').innerHTML=banks.length?banks.map(([name,bal])=>`<div class="tc"><div class="tc-icon cash-in">🏦</div><div class="tc-body"><div class="tc-top"><span class="tc-label cash-in">${name}</span><span class="tc-amt">${fmtAED(bal)}</span></div></div></div>`).join(''):'<div class="empty">No bank records yet</div>';
-  document.getElementById('cash-list').innerHTML=cashRecs.length?[...cashRecs].reverse().map(cashHTML).join(''):'<div class="empty"><div class="empty-icon">💵</div>No cash records yet</div>';
-}
-
-function renderPL(){
-  const s=stats();
-  document.getElementById('pl-aed-val').textContent=fmtAED(s.plAED);
-  document.getElementById('pl-aed-val').className='val '+(s.plAED>=0?'g':'r');
-  document.getElementById('pl-pkr-val').textContent=fmtAED(s.plPKR);
-  document.getElementById('pl-pkr-val').className='val '+(s.plPKR>=0?'g':'r');
-
-  const el=document.getElementById('pl-rows');
-  if(!s.plRows.length){el.innerHTML='<div class="empty">No sell transactions yet</div>';document.getElementById('pl-total').textContent='AED 0.00';if(plChart){plChart.destroy();plChart=null;}return;}
-
-  let cum=0;const plData=[];let rows='';
-  s.plRows.forEach(t=>{
-    cum+=t.pl;
-    plData.push({d:t.date.slice(5),v:+cum.toFixed(2)});
-    const tag=t.type==='sell-pkr'?'<span class="badge pkr">PKR</span>':'<span class="badge aed">AED</span>';
-    rows+=`<div class="pl-row">
-      <div class="pl-desc">${t.date} ${tag} Sell ${fmtU(t.netUsdt)}<small>Cost: ${fmtAED(t.cost)} | Revenue: ${fmtAED(t.rev)}${t.type==='sell-pkr'?' (AED eq)':''}</small></div>
-      <div class="pl-amt" style="color:${t.pl>=0?'var(--green)':'var(--red-dark)'}">${t.pl>=0?'+':''}${fmtAED(t.pl)}</div>
-    </div>`;
-  });
-  el.innerHTML=rows;
-  const ptEl=document.getElementById('pl-total');
-  ptEl.textContent=(s.totalPL>=0?'+':'')+fmtAED(s.totalPL);
-  ptEl.style.color=s.totalPL>=0?'var(--green)':'var(--red-dark)';
-
-  if(plChart)plChart.destroy();
-  const ctx2=document.getElementById('pl-chart').getContext('2d');
-  plChart=new Chart(ctx2,{type:'line',data:{labels:plData.map(d=>d.d),datasets:[{label:'Cumulative P&L (AED)',data:plData.map(d=>d.v),borderColor:'#0F6E56',backgroundColor:'rgba(29,158,117,0.12)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#0F6E56'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'}}}}});
-}
-
-function getExportRows(filter){
-  const s=stats();
-  if(filter==='cash') return cashRecs.map(c=>({Date:c.date,Type:c.type==='cash-in'?'Cash In':'Cash Out',Source:c.source,Bank:c.bank||'—','Amount(AED)':c.amount,Note:c.note||''}));
-  if(filter==='opening') return opening.map(o=>({Date:o.date,'USDT':o.usdt,'Rate(AED/USDT)':o.rate,'Cost(AED)':o.aedCost.toFixed(2),Note:o.note||''}));
-  if(filter==='pl') return s.plRows.map(t=>({Date:t.date,Type:t.type==='sell-pkr'?'Sell PKR':'Sell AED','USDT(net)':t.netUsdt.toFixed(4),'Fee(USDT)':t.fee.toFixed(4),'Revenue(AED)':t.rev.toFixed(2),'Cost(AED)':t.cost.toFixed(2),'P&L(AED)':t.pl.toFixed(2),Platform:t.platform,Note:t.note||''}));
-
-  let list=trades;
-  if(filter==='buy')  list=trades.filter(t=>t.type==='buy');
-  if(filter==='sell') list=trades.filter(t=>t.type==='sell-aed'||t.type==='sell-pkr');
-  return list.map(t=>({
-    Date:t.date, Type:t.type.toUpperCase(), Platform:t.platform,
-    'USDT(gross)':t.usdt, 'Fee(USDT)':t.fee.toFixed(4), 'USDT(net)':t.netUsdt.toFixed(4),
-    'Rate':t.rate, 'AED Paid/Recv':t.type==='buy'?t.aedPaid.toFixed(2):t.aedRecv.toFixed(2),
-    'PKR Recv':t.pkrRecv?t.pkrRecv.toFixed(2):'—', 'PKR Rate':t.pkrRate||'—',
-    Note:t.note||''
-  }));
-}
-
-function exportExcel(){
-  const type=document.getElementById('exp-type').value;
-  const rows=getExportRows(type);
-  if(!rows.length){alert('No data for selected filter.');return;}
-  const s=stats();
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Data');
-  const sum=[['Summary',''],['Opening USDT',s.openingUSDT],['Bought USDT (net)',s.boughtUSDT.toFixed(4)],['Sold USDT (net)',s.soldUSDT.toFixed(4)],['Balance USDT',s.balance.toFixed(4)],['Total Fees',s.totalFees.toFixed(4)+' USDT'],['Avg Cost per USDT',fmtAED(s.avgCostAED)],['P&L from AED sales',fmtAED(s.plAED)],['P&L from PKR sales (AED)',fmtAED(s.plPKR)],['Total P&L (AED)',fmtAED(s.totalPL)],['Cash in Hand',fmtAED(s.cashHand)],['Cash in Banks',fmtAED(s.cashBank)]];
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Summary');
-  XLSX.writeFile(wb,'USDT_'+today+'.xlsx');
-  document.getElementById('exp-status').textContent='✅ Excel exported: '+rows.length+' rows';
-}
-
-function exportPDF(){
-  const type=document.getElementById('exp-type').value;
-  const rows=getExportRows(type);
-  if(!rows.length){alert('No data for selected filter.');return;}
-  const s=stats();
-  let html=`<html><head><meta charset="UTF-8"><style>body{font-family:-apple-system,sans-serif;font-size:11px;padding:20px;color:#111}h1{font-size:17px;color:#0F6E56;margin-bottom:4px}.sub{font-size:10px;color:#666;margin-bottom:14px}.summary{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}.s{background:#f4f4f4;padding:8px 11px;border-radius:7px;min-width:90px}.s .l{font-size:9px;color:#888}.s .v{font-size:12px;font-weight:700}table{width:100%;border-collapse:collapse;font-size:10px}th{background:#0F6E56;color:#fff;padding:5px 7px;text-align:left}td{padding:4px 7px;border-bottom:.5px solid #eee}tr:nth-child(even){background:#f9f9f9}.pos{color:#0F6E56}.neg{color:#A32D2D}.footer{margin-top:14px;font-size:9px;color:#aaa}</style></head><body>
-  <h1>USDT Trading Report</h1><div class="sub">Date: ${today} · Report: ${type}</div>
-  <div class="summary">
-    <div class="s"><div class="l">Balance USDT</div><div class="v">${s.balance.toFixed(2)}</div></div>
-    <div class="s"><div class="l">Total Fees</div><div class="v">${s.totalFees.toFixed(4)}</div></div>
-    <div class="s"><div class="l">P&L AED sales</div><div class="v ${s.plAED>=0?'pos':'neg'}">AED ${s.plAED.toFixed(2)}</div></div>
-    <div class="s"><div class="l">P&L PKR sales</div><div class="v ${s.plPKR>=0?'pos':'neg'}">AED ${s.plPKR.toFixed(2)}</div></div>
-    <div class="s"><div class="l">Total P&L</div><div class="v ${s.totalPL>=0?'pos':'neg'}">AED ${s.totalPL.toFixed(2)}</div></div>
-  </div>
-  <table><tr>${Object.keys(rows[0]).map(k=>`<th>${k}</th>`).join('')}</tr>`;
-  rows.forEach(r=>{html+=`<tr>${Object.values(r).map((v,i)=>{const k=Object.keys(r)[i];let cls=k.includes('P&L')?(parseFloat(v)>=0?'pos':'neg'):'';return`<td class="${cls}">${v}</td>`;}).join('')}</tr>`;});
-  html+=`</table><div class="footer">USDT Tracker · ${rows.length} records · ${today}</div></body></html>`;
-  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);}
-  document.getElementById('exp-status').textContent='✅ PDF ready: '+rows.length+' rows';
-}
-
-renderDashboard(); updateHeader();
+const FEE=0.0008;
+let trades=JSON.parse(localStorage.getItem('ut_trades')||'[]');
+let opening=JSON.parse(localStorage.getItem('ut_opening')||'[]');
+let cashRecs=JSON.parse(localStorage.getItem('ut_cash')||'[]');
+let expenses=JSON.parse(localStorage.getItem('ut_expenses')||'[]');
+let tt='buy',pf='binance',activeCat='Transfer Fee',selMonth='';
+let volCh,plCh,expCh;
+const today=new Date().toISOString().split('T')[0];
+['t-date','oi-date','c-date','exp-date'].forEach(id=>{try{document.getElementById(id).value=today;}catch(e){}});
+function sv(){localStorage.setItem('ut_trades',JSON.stringify(trades));localStorage.setItem('ut_opening',JSON.stringify(opening));localStorage.setItem('ut_cash',JSON.stringify(cashRecs));localStorage.setItem('ut_expenses',JSON.stringify(expenses));}
+const fa=v=>'AED '+parseFloat(v).toFixed(2);
+const fp=v=>'PKR '+parseFloat(v).toFixed(2);
+const fu=v=>parseFloat(v).toFixed(4)+' USDT';
+function selCat(el,cat){document.querySelectorAll('.cchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');activeCat=cat;document.getElementById('cust-cat-row').style.display=cat==='Other'?'block':'none';}
+function setTT(t){tt=t;['tt-buy','tt-sell-aed','tt-sell-pkr'].forEach(id=>document.getElementById(id).classList.remove('active','buy','sell-aed','sell-pkr'));const el=document.getElementById('tt-'+t);el.classList.add('active',t);document.getElementById('pkr-fields').style.display=t==='sell-pkr'?'block':'none';document.getElementById('pvbox').className='pvbox '+(t==='buy'?'buy':'sell');document.getElementById('rl').textContent=t==='sell-pkr'?'Rate (PKR/USDT)':'Rate (AED/USDT)';document.getElementById('ul').textContent=t==='buy'?'USDT to Buy':'USDT to Sell';document.getElementById('t-rate').placeholder=t==='sell-pkr'?'278':'3.68';updPrev();}
+function setPF(p){pf=p;['pt-binance','pt-p2p'].forEach(id=>document.getElementById(id).classList.remove('active','binance','p2p'));document.getElementById('pt-'+p).classList.add('active',p);updPrev();}
+function updPrev(){const u=parseFloat(document.getElementById('t-usdt').value)||0,r=parseFloat(document.getElementById('t-rate').value)||0,hf=pf==='binance',fee=hf?u*FEE:0,net=u-fee;if(tt==='buy'){document.getElementById('pv0').textContent=u?fu(u):'—';document.getElementById('pv1').textContent=hf?'-'+fu(fee):'No fee';document.getElementById('pvl2').textContent='USDT you receive';document.getElementById('pv2').textContent=u?fu(net):'—';document.getElementById('pvl3').textContent='AED to pay';document.getElementById('pv3').textContent=(u&&r)?fa(u*r):'—';}else if(tt==='sell-aed'){document.getElementById('pv0').textContent=u?fu(u):'—';document.getElementById('pv1').textContent=hf?'-'+fu(fee):'No fee';document.getElementById('pvl2').textContent='USDT deducted';document.getElementById('pv2').textContent=u?fu(net):'—';document.getElementById('pvl3').textContent='AED you receive';document.getElementById('pv3').textContent=(u&&r)?fa(net*r):'—';}else{const pr=parseFloat(document.getElementById('t-pkr-rate').value)||0,ae=parseFloat(document.getElementById('t-aed-equiv').value)||0;document.getElementById('pv0').textContent=u?fu(u):'—';document.getElementById('pv1').textContent=hf?'-'+fu(fee):'No fee';document.getElementById('pvl2').textContent='PKR you receive';document.getElementById('pv2').textContent=(u&&pr)?fp(net*pr):'—';document.getElementById('pvl3').textContent='AED equivalent';document.getElementById('pv3').textContent=(u&&ae)?fa(net*ae):'—';}}
+function addTrade(){const u=parseFloat(document.getElementById('t-usdt').value),r=parseFloat(document.getElementById('t-rate').value),date=document.getElementById('t-date').value,note=document.getElementById('t-note').value.trim();if(!u||!r||!date){alert('Fill USDT, rate, date.');return;}const hf=pf==='binance',fee=hf?u*FEE:0,net=+(u-fee).toFixed(6);let rec={type:tt,platform:pf,usdt:u,rate:r,fee,netUsdt:net,date,note,id:Date.now()};if(tt==='buy'){rec.aedPaid=+(u*r).toFixed(4);}else if(tt==='sell-aed'){rec.aedRecv=+(net*r).toFixed(4);}else{const pr=parseFloat(document.getElementById('t-pkr-rate').value)||0,ae=parseFloat(document.getElementById('t-aed-equiv').value)||0;if(!pr||!ae){alert('Enter PKR rate and AED equivalent.');return;}rec.pkrRate=pr;rec.aedEquiv=ae;rec.pkrRecv=+(net*pr).toFixed(4);rec.aedRecv=+(net*ae).toFixed(4);}trades.push(rec);trades.sort((a,b)=>a.date.localeCompare(b.date));sv();['t-usdt','t-note','t-pkr-rate','t-aed-equiv'].forEach(id=>document.getElementById(id).value='');updPrev();renderAllTrades();updHdr();}
+function addOpening(){const u=parseFloat(document.getElementById('oi-usdt').value),r=parseFloat(document.getElementById('oi-rate').value),date=document.getElementById('oi-date').value,note=document.getElementById('oi-note').value.trim();if(!u||!r){alert('Fill USDT and rate.');return;}opening.push({usdt:u,rate:r,aedCost:+(u*r).toFixed(4),date:date||today,note,id:Date.now()});sv();document.getElementById('oi-usdt').value='';document.getElementById('oi-rate').value='';document.getElementById('oi-note').value='';renderInventory();updHdr();}
+function addCash(){const type=document.getElementById('c-type').value,src=document.getElementById('c-source').value,bank=src==='Bank'?document.getElementById('c-bank').value.trim():'',amt=parseFloat(document.getElementById('c-amount').value),date=document.getElementById('c-date').value,note=document.getElementById('c-note').value.trim();if(!amt||!date){alert('Fill amount and date.');return;}if(src==='Bank'&&!bank){alert('Enter bank name.');return;}cashRecs.push({type,source:src,bank,amount:amt,date,note,id:Date.now()});cashRecs.sort((a,b)=>a.date.localeCompare(b.date));sv();['c-amount','c-note','c-bank'].forEach(id=>document.getElementById(id).value='');renderCash();updHdr();}
+function togBank(){document.getElementById('bank-row').style.display=document.getElementById('c-source').value==='Bank'?'block':'none';}
+function addExpense(){const amt=parseFloat(document.getElementById('exp-amt').value),date=document.getElementById('exp-date').value,desc=document.getElementById('exp-desc').value.trim();let cat=activeCat;if(cat==='Other'){const c=document.getElementById('exp-cust').value.trim();if(c)cat=c;}if(!amt||!date){alert('Fill amount and date.');return;}expenses.push({cat,amount:amt,date,desc,id:Date.now()});expenses.sort((a,b)=>a.date.localeCompare(b.date));sv();document.getElementById('exp-amt').value='';document.getElementById('exp-desc').value='';renderExpenses();updHdr();}
+function delTrade(id){if(!confirm('Delete?'))return;trades=trades.filter(t=>t.id!==id);sv();renderAllTrades();updHdr();const sc=document.querySelector('.screen.active').id.replace('screen-','');if(sc==='dashboard')renderDashboard();if(sc==='pl')renderPL();}
+function delOpen(id){if(!confirm('Delete?'))return;opening=opening.filter(o=>o.id!==id);sv();renderInventory();updHdr();}
+function delCash(id){if(!confirm('Delete?'))return;cashRecs=cashRecs.filter(c=>c.id!==id);sv();renderCash();updHdr();}
+function delExp(id){if(!confirm('Delete?'))return;expenses=expenses.filter(e=>e.id!==id);sv();renderExpenses();updHdr();}
+const DELSVG='<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
+function tcHTML(t){const ib=t.type==='buy',ia=t.type==='sell-aed',ip=t.type==='sell-pkr';const pb=`<span class="bdg ${t.platform}">${t.platform==='binance'?'Binance':'P2P'}</span>`;let lbl,ic,amt,sub;if(ib){lbl='Buy';ic='buy';amt=fu(t.netUsdt);sub=fa(t.aedPaid)+' @ '+t.rate+(t.fee>0?' | fee: '+t.fee.toFixed(4)+' USDT':'');}else if(ia){lbl='Sell';ic='sell-aed';amt=fa(t.aedRecv);sub=fu(t.netUsdt)+' @ '+t.rate+(t.fee>0?' | fee: '+t.fee.toFixed(4)+' USDT':'');}else{lbl='Sell PKR';ic='sell-pkr';amt=fp(t.pkrRecv);sub=fu(t.netUsdt)+' @ '+t.pkrRate+' | AED: '+fa(t.aedRecv);}return`<div class="tc"><div class="tci ${ic}">${ib?'↑':'↓'}</div><div class="tcb"><div class="tct"><span class="tcl ${ic}">${lbl}${pb}</span><span class="tca">${amt}</span></div><div class="tcbt"><span class="tcd">${t.date}${t.note?' · '+t.note:''}</span><span class="tcs">${sub}</span></div></div><button class="tcdl" onclick="delTrade(${t.id})">${DELSVG}</button></div>`;}
+function openHTML(o){return`<div class="tc"><div class="tci opening">📦</div><div class="tcb"><div class="tct"><span class="tcl opening">Opening Stock</span><span class="tca">${fu(o.usdt)}</span></div><div class="tcbt"><span class="tcd">${o.date}${o.note?' · '+o.note:''}</span><span class="tcs">${fa(o.aedCost)} @ ${o.rate}</span></div></div><button class="tcdl" onclick="delOpen(${o.id})">${DELSVG}</button></div>`;}
+function cashHTML(c){const ii=c.type==='cash-in';const lbl=c.source==='Bank'?c.bank:c.source;return`<div class="tc"><div class="tci ${c.type}">${ii?'↓':'↑'}</div><div class="tcb"><div class="tct"><span class="tcl ${c.type}">${ii?'Cash In':'Cash Out'}</span><span class="tca">${fa(c.amount)}</span></div><div class="tcbt"><span class="tcd">${c.date} · ${lbl}${c.note?' · '+c.note:''}</span></div></div><button class="tcdl" onclick="delCash(${c.id})">${DELSVG}</button></div>`;}
+function expHTM(e){return`<div class="tc"><div class="tci expense">💸</div><div class="tcb"><div class="tct"><span class="tcl expense">${e.cat}</span><span class="tca" style="color:var(--orange)">${fa(e.amount)}</span></div><div class="tcbt"><span class="tcd">${e.date}${e.desc?' · '+e.desc:''}</span></div></div><button class="tcdl" onclick="delExp(${e.id})">${DELSVG}</button></div>`;}
+function calcStats(){const ou=opening.reduce((a,o)=>a+o.usdt,0),oc=opening.reduce((a,o)=>a+o.aedCost,0);let bu=0,ap=0,su=0,tf=0;trades.forEach(t=>{if(t.type==='buy'){bu+=t.netUsdt;ap+=t.aedPaid;tf+=t.fee;}else{su+=t.netUsdt;tf+=t.fee;}});const tc=(oc+ap),tu=(ou+bu),avg=tu?tc/tu:0,bal=tu-su,plRows=[];let plA=0,plP=0;trades.filter(t=>t.type!=='buy').forEach(t=>{const cost=t.netUsdt*avg,rev=t.aedRecv,pl=rev-cost;if(t.type==='sell-aed')plA+=pl;else plP+=pl;plRows.push({...t,cost,rev,pl});});const gross=plA+plP,totalExp=expenses.reduce((a,e)=>a+e.amount,0),net=gross-totalExp;let ch=0,cb=0;const bm={};cashRecs.forEach(c=>{const s=c.type==='cash-in'?1:-1,a=c.amount*s;if(c.source==='Cash in Hand')ch+=a;else if(c.source==='Bank'){cb+=a;bm[c.bank]=(bm[c.bank]||0)+a;}});return{ou,bu,su,bal,totalAvail:tu,tf,avg,plA,plP,gross,totalExp,net,plRows,ch,cb,bm};}
+function updHdr(){const s=calcStats();document.getElementById('hdr-inv').textContent=s.bal.toFixed(2)+' USDT';}
+function show(id,btn){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');btn.classList.add('active');if(id==='dashboard')renderDashboard();if(id==='inventory')renderInventory();if(id==='cash')renderCash();if(id==='expenses')renderExpenses();if(id==='pl')renderPL();if(id==='trade')renderAllTrades();}
+function renderDashboard(){const s=calcStats();document.getElementById('d-inv').textContent=s.bal.toFixed(2);const gp=document.getElementById('d-pl');gp.textContent=fa(s.gross);gp.className='vl '+(s.gross>=0?'g':'r');document.getElementById('d-exp').textContent=fa(s.totalExp);const np=document.getElementById('d-net');np.textContent=fa(s.net);np.className='vl '+(s.net>=0?'g':'r');document.getElementById('d-fees').textContent=s.tf.toFixed(4)+' USDT';document.getElementById('d-cash').textContent=fa(s.ch+s.cb);const l5=[...trades].reverse().slice(0,5);document.getElementById('recent-list').innerHTML=l5.length?l5.map(tcHTML).join(''):'<div class="empty"><div class="eico">📊</div>No trades yet</div>';const l8=trades.slice(-8);if(volCh)volCh.destroy();const ctx=document.getElementById('vol-chart').getContext('2d');volCh=new Chart(ctx,{type:'bar',data:{labels:l8.map(t=>t.date.slice(5)),datasets:[{label:'Buy',data:l8.map(t=>t.type==='buy'?t.netUsdt:0),backgroundColor:'#1D9E75',borderRadius:4},{label:'Sell',data:l8.map(t=>t.type!=='buy'?t.netUsdt:0),backgroundColor:'#E24B4A',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'}}}}});}
+function renderAllTrades(){document.getElementById('all-trades').innerHTML=trades.length?[...trades].reverse().map(tcHTML).join(''):'<div class="empty"><div class="eico">📋</div>No trades yet</div>';}
+function renderInventory(){const s=calcStats();document.getElementById('is-open').textContent=s.ou.toFixed(4)+' USDT';document.getElementById('is-bought').textContent=s.bu.toFixed(4)+' USDT';document.getElementById('is-total').textContent=s.totalAvail.toFixed(4)+' USDT';document.getElementById('is-sold').textContent=s.su.toFixed(4)+' USDT';document.getElementById('is-bal').textContent=s.bal.toFixed(4)+' USDT';document.getElementById('is-fees').textContent=s.tf.toFixed(4)+' USDT';document.getElementById('is-avg').textContent=fa(s.avg);document.getElementById('opening-list').innerHTML=opening.length?[...opening].reverse().map(openHTML).join(''):'<div class="empty"><div class="eico">📦</div>No opening stock added</div>';document.getElementById('buy-list').innerHTML=trades.filter(t=>t.type==='buy').length?[...trades].filter(t=>t.type==='buy').reverse().map(tcHTML).join(''):'<div class="empty"><div class="eico">🛒</div>No purchases yet</div>';}
+function renderCash(){const s=calcStats();document.getElementById('cs-hand').textContent=fa(s.ch);document.getElementById('cs-bank').textContent=fa(s.cb);document.getElementById('cs-total').textContent=fa(s.ch+s.cb);const banks=Object.entries(s.bm);document.getElementById('bank-bkdn').innerHTML=banks.length?banks.map(([n,b])=>`<div class="tc"><div class="tci cash-in">🏦</div><div class="tcb"><div class="tct"><span class="tcl cash-in">${n}</span><span class="tca">${fa(b)}</span></div></div></div>`).join(''):'<div class="empty">No bank records yet</div>';document.getElementById('cash-list').innerHTML=cashRecs.length?[...cashRecs].reverse().map(cashHTML).join(''):'<div class="empty"><div class="eico">💵</div>No cash records yet</div>';}
+function renderExpenses(){const allMonths=[...new Set(expenses.map(e=>e.date.slice(0,7)))].sort().reverse();if(!selMonth&&allMonths.length)selMonth=allMonths[0];const mf=document.getElementById('mfil');mf.innerHTML=['All',...allMonths].map(m=>`<button class="mbtn ${(m==='All'&&!selMonth)||(m===selMonth)?'active':''}" onclick="selMonth='${m==='All'?'':m}';renderExpenses()">${m==='All'?'All Time':m}</button>`).join('');const fil=selMonth?expenses.filter(e=>e.date.startsWith(selMonth)):expenses;const allTot=expenses.reduce((a,e)=>a+e.amount,0);const perTot=fil.reduce((a,e)=>a+e.amount,0);document.getElementById('exp-period-tot').textContent=fa(perTot);document.getElementById('exp-all-tot').textContent=fa(allTot);const cm={};fil.forEach(e=>{cm[e.cat]=(cm[e.cat]||0)+e.amount;});const mx=Math.max(...Object.values(cm),1);document.getElementById('cat-bkdn').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`<div class="cbar"><div class="cbar-top"><span class="cbar-name">${cat}</span><span class="cbar-amt">${fa(amt)}</span></div><div class="cbar-track"><div class="cbar-fill" style="width:${(amt/mx*100).toFixed(1)}%"></div></div></div>`).join('')||'<div class="empty">No expenses this period</div>';if(expCh)expCh.destroy();const mm={};expenses.forEach(e=>{const m=e.date.slice(0,7);mm[m]=(mm[m]||0)+e.amount;});const sm=Object.keys(mm).sort();const ctx=document.getElementById('exp-chart').getContext('2d');expCh=new Chart(ctx,{type:'bar',data:{labels:sm,datasets:[{label:'Expenses (AED)',data:sm.map(m=>mm[m]),backgroundColor:'#C05C00',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'}}}}});document.getElementById('exp-list').innerHTML=fil.length?[...fil].reverse().map(expHTM).join(''):'<div class="empty"><div class="eico">💸</div>No expenses this period</div>';}
+function renderPL(){const s=calcStats();const nb=document.getElementById('npbox');nb.className='npbox '+(s.net>=0?'profit':'loss');document.getElementById('np-val').textContent=(s.net>=0?'+':'')+fa(s.net);document.getElementById('gpl-val').textContent=(s.gross>=0?'+':'')+fa(s.gross);document.getElementById('exp-ded').textContent='-'+fa(s.totalExp);document.getElementById('pl-aed').textContent=fa(s.plA);document.getElementById('pl-aed').className='vl '+(s.plA>=0?'g':'r');document.getElementById('pl-pkr').textContent=fa(s.plP);document.getElementById('pl-pkr').className='vl '+(s.plP>=0?'g':'r');const el=document.getElementById('pl-rows');if(!s.plRows.length){el.innerHTML='<div class="empty">No sell transactions yet</div>';document.getElementById('pl-total').textContent='AED 0.00';if(plCh){plCh.destroy();plCh=null;}}else{let cum=0;const pd=[];let rows='';s.plRows.forEach(t=>{cum+=t.pl;pd.push({d:t.date.slice(5),v:+cum.toFixed(2)});const tag=t.type==='sell-pkr'?'<span class="bdg pkr">PKR</span>':'<span class="bdg aed">AED</span>';rows+=`<div class="plrow"><div class="pld">${t.date} ${tag} ${fu(t.netUsdt)}<small>Cost: ${fa(t.cost)} | Rev: ${fa(t.rev)}</small></div><div class="pla" style="color:${t.pl>=0?'var(--green)':'var(--red-dark)'}">${t.pl>=0?'+':''}${fa(t.pl)}</div></div>`;});el.innerHTML=rows;const pt=document.getElementById('pl-total');pt.textContent=(s.gross>=0?'+':'')+fa(s.gross);pt.style.color=s.gross>=0?'var(--green)':'var(--red-dark)';if(plCh)plCh.destroy();const ctx2=document.getElementById('pl-chart').getContext('2d');plCh=new Chart(ctx2,{type:'line',data:{labels:pd.map(d=>d.d),datasets:[{label:'Cumulative P&L (AED)',data:pd.map(d=>d.v),borderColor:'#0F6E56',backgroundColor:'rgba(29,158,117,0.12)',tension:0.4,fill:true,pointRadius:3,pointBackgroundColor:'#0F6E56'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10},color:'#888',boxWidth:10}}},scales:{x:{ticks:{font:{size:9},color:'#888'},grid:{display:false}},y:{ticks:{font:{size:9},color:'#888'}}}}});}const cm={};expenses.forEach(e=>{cm[e.cat]=(cm[e.cat]||0)+e.amount;});const er=document.getElementById('pl-exp-rows');er.innerHTML=Object.entries(cm).length?Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`<div class="plrow"><div class="pld">${cat}</div><div class="pla" style="color:var(--orange)">-${fa(amt)}</div></div>`).join(''):'<div class="empty" style="padding:6px 0">No expenses</div>';document.getElementById('pl-exp-tot').textContent=fa(s.totalExp);}
+function getRows(filter){const s=calcStats();if(filter==='expenses')return expenses.map(e=>({Date:e.date,Category:e.cat,'Amount(AED)':e.amount,Description:e.desc||''}));if(filter==='cash')return cashRecs.map(c=>({Date:c.date,Type:c.type==='cash-in'?'Cash In':'Cash Out',Source:c.source,Bank:c.bank||'—','Amount(AED)':c.amount,Note:c.note||''}));if(filter==='opening')return opening.map(o=>({Date:o.date,'USDT':o.usdt,'Rate(AED)':o.rate,'Cost(AED)':o.aedCost.toFixed(2),Note:o.note||''}));if(filter==='pl')return s.plRows.map(t=>({Date:t.date,Type:t.type,'USDT(net)':t.netUsdt.toFixed(4),'Revenue(AED)':t.rev.toFixed(2),'Cost(AED)':t.cost.toFixed(2),'P&L(AED)':t.pl.toFixed(2),Platform:t.platform,Note:t.note||''}));let list=trades;if(filter==='buy')list=trades.filter(t=>t.type==='buy');if(filter==='sell')list=trades.filter(t=>t.type!=='buy');return list.map(t=>({Date:t.date,Type:t.type,Platform:t.platform,'USDT(gross)':t.usdt,'Fee(USDT)':t.fee.toFixed(4),'USDT(net)':t.netUsdt.toFixed(4),Rate:t.rate,'AED Paid/Recv':t.type==='buy'?t.aedPaid:t.aedRecv,'PKR Recv':t.pkrRecv||'—',Note:t.note||''}));}
+function doExcel(){const type=document.getElementById('exp-type').value,rows=getRows(type);if(!rows.length){alert('No data.');return;}const s=calcStats(),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Data');const sum=[['Summary',''],['USDT Balance',s.bal.toFixed(4)],['Gross P&L (AED)',s.gross.toFixed(2)],['Total Expenses (AED)',s.totalExp.toFixed(2)],['Net Profit (AED)',s.net.toFixed(2)],['Total Fees (USDT)',s.tf.toFixed(4)],['Cash in Hand',s.ch.toFixed(2)],['Cash in Banks',s.cb.toFixed(2)]];XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sum),'Summary');XLSX.writeFile(wb,'USDT_'+today+'.xlsx');document.getElementById('exp-status').textContent='✅ Excel exported: '+rows.length+' rows';}
+function doPDF(){const type=document.getElementById('exp-type').value,rows=getRows(type);if(!rows.length){alert('No data.');return;}const s=calcStats();let html=`<html><head><meta charset="UTF-8"><style>body{font-family:-apple-system,sans-serif;font-size:11px;padding:18px;color:#111}h1{font-size:16px;color:#0F6E56;margin-bottom:3px}.sub{font-size:9px;color:#666;margin-bottom:12px}.net{background:#E1F5EE;padding:9px 13px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}.net .nl{font-size:10px;color:#0F6E56;font-weight:700}.net .nv{font-size:16px;font-weight:700;color:#0F6E56}.summary{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}.s{background:#f4f4f4;padding:7px 10px;border-radius:6px;min-width:85px}.s .l{font-size:9px;color:#888}.s .v{font-size:11px;font-weight:700}table{width:100%;border-collapse:collapse;font-size:10px}th{background:#0F6E56;color:#fff;padding:5px 7px;text-align:left}td{padding:4px 7px;border-bottom:.5px solid #eee}tr:nth-child(even){background:#f9f9f9}.pos{color:#0F6E56}.neg{color:#A32D2D}.exp{color:#C05C00}.footer{margin-top:12px;font-size:9px;color:#aaa}</style></head><body>
+<h1>USDT Trading Report</h1><div class="sub">Date: ${today} · Report: ${type}</div>
+<div class="net"><div class="nl">NET PROFIT (after expenses)</div><div class="nv">${s.net>=0?'+':''}AED ${s.net.toFixed(2)}</div></div>
+<div class="summary"><div class="s"><div class="l">USDT Bal</div><div class="v">${s.bal.toFixed(2)}</div></div><div class="s"><div class="l">Gross P&L</div><div class="v ${s.gross>=0?'pos':'neg'}">AED ${s.gross.toFixed(2)}</div></div><div class="s"><div class="l">Expenses</div><div class="v exp">AED ${s.totalExp.toFixed(2)}</div></div><div class="s"><div class="l">Fees USDT</div><div class="v">${s.tf.toFixed(4)}</div></div><div class="s"><div class="l">Cash</div><div class="v">AED ${(s.ch+s.cb).toFixed(2)}</div></div></div>
+<table><tr>${Object.keys(rows[0]).map(k=>`<th>${k}</th>`).join('')}</tr>`;rows.forEach(r=>{html+=`<tr>${Object.values(r).map((v,i)=>{const k=Object.keys(r)[i];let cl=k.includes('P&L')?(parseFloat(v)>=0?'pos':'neg'):k==='Amount(AED)'&&type==='expenses'?'exp':'';return`<td class="${cl}">${v}</td>`;}).join('')}</tr>`;});html+=`</table><div class="footer">USDT Tracker · ${rows.length} records · ${today}</div></body></html>`;const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);}document.getElementById('exp-status').textContent='✅ PDF ready: '+rows.length+' rows';}
+renderDashboard();updHdr();
 </script>
 </body>
 </html>
